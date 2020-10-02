@@ -1,3 +1,4 @@
+import 'package:connect/Screens/Onboarding/signup.dart';
 import 'package:flutter/material.dart';
 
 class login extends StatefulWidget {
@@ -105,7 +106,12 @@ class _loginState extends State<login> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text("Don't have an account? ", style: TextStyle(fontStyle: FontStyle.italic, fontSize: 18)),
-                Text("sign up", style: TextStyle(color: Color(0xFFF61B39), fontStyle: FontStyle.italic, fontSize: 18))
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,MaterialPageRoute(builder: (context) => signup()));
+                  },
+                  child: Text("sign up", style: TextStyle(color: Color(0xFFF61B39), fontStyle: FontStyle.italic, fontSize: 18))
+                )
               ],
             ),
           ],
