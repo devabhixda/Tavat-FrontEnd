@@ -33,7 +33,8 @@ class _loginState extends State<login> {
                     hintText: "username"
                   ),
                   style: TextStyle(
-                    fontSize: 24
+                    fontSize: 24,
+                    fontStyle: FontStyle.italic
                   ),
                 ),
               ),
@@ -52,7 +53,8 @@ class _loginState extends State<login> {
                     hintText: "password"
                   ),
                   style: TextStyle(
-                    fontSize: 24
+                    fontSize: 24,
+                    fontStyle: FontStyle.italic
                   ),
                 ),
               ),
