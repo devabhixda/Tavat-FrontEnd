@@ -1,3 +1,4 @@
+import 'package:connect/Screens/home.dart';
 import 'package:flutter/material.dart';
 
 class signup extends StatefulWidget {
@@ -124,7 +125,7 @@ class _signupState extends State<signup> {
               child: Text("Sign up", style: TextStyle(color: Colors.white, fontSize: 24),
               ),
               onPressed: () => {
-                print("Pressed")
+                Navigator.push(context, MaterialPageRoute(builder: (context) => home()))
               },
             ),
           ],
