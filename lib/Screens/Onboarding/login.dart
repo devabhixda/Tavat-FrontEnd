@@ -18,7 +18,7 @@ class _loginState extends State<login> {
         child: Column(
           children: [
             Container(
-              height: 0.4 * h,
+              height: 0.35 * h,
             ),
             Card(
               shape: RoundedRectangleBorder(
@@ -70,7 +70,7 @@ class _loginState extends State<login> {
               height: 0.03 * h,
             ),
             FlatButton(
-              padding: EdgeInsets.symmetric(horizontal: 0.38 * w, vertical: 0.02 * h),
+              padding: EdgeInsets.symmetric(horizontal: 0.37 * w, vertical: 0.02 * h),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30)
               ),
@@ -91,13 +91,13 @@ class _loginState extends State<login> {
                 Card(
                   shape: CircleBorder(),
                   elevation: 5,
-                  child: Image(image: AssetImage('assets/images/google.png'), height: 50)
+                  child: Image(image: AssetImage('assets/images/google.png'), height: 0.08 * h)
                 ),
                 SizedBox(width: 0.1 * w),
                 Card(
                   shape: CircleBorder(),
                   elevation: 5,
-                  child: Image(image: AssetImage('assets/images/fb.png'), height: 50)
+                  child: Image(image: AssetImage('assets/images/fb.png'), height: 0.08 * h)
                 ),
               ],
             ),

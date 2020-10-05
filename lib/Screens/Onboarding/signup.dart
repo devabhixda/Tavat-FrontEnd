@@ -111,12 +111,9 @@ class _signupState extends State<signup> {
                 Checkbox(
                   value: false,
                 ),
-                Text("I have read and agreed with all the ", style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12)),
-                Text("terms and conditions", style: TextStyle(color: Color(0xFFF61B39), fontStyle: FontStyle.italic, fontSize: 12))
+                Text("I have read and agreed with all the ", style: TextStyle(fontStyle: FontStyle.italic, fontSize: 10)),
+                Text("terms and conditions", style: TextStyle(color: Color(0xFFF61B39), fontStyle: FontStyle.italic, fontSize: 10))
               ],
-            ),
-            SizedBox(
-              height: 0.05 * h,
             ),
             FlatButton(
               padding: EdgeInsets.symmetric(horizontal: 0.30 * w, vertical: 0.02 * h),
