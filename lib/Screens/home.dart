@@ -1,4 +1,5 @@
 import 'package:connect/Screens/checkIn.dart';
+import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -13,6 +14,7 @@ class _homeState extends State<home> {
     h = MediaQuery.of(context).size.height;
     w = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: bgrey,
       body: Stack(
         children: [
           Transform.translate(
