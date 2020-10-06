@@ -117,18 +117,20 @@ class _signupState extends State<signup> {
                 Text("terms and conditions", style: TextStyle(color: cred, fontStyle: FontStyle.italic, fontSize: 10))
               ],
             ),
-            FlatButton(
-              padding: EdgeInsets.symmetric(horizontal: 0.30 * w, vertical: 0.02 * h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30)
+            Center(
+              child: FlatButton(
+                padding: EdgeInsets.symmetric(horizontal: 0.30 * w, vertical: 0.02 * h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)
+                ),
+                color: cred,
+                child: Text("Sign up", style: TextStyle(color: Colors.white, fontSize: 0.05 * w),
+                ),
+                onPressed: () => {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => home()))
+                },
               ),
-              color: cred,
-              child: Text("Sign up", style: TextStyle(color: Colors.white, fontSize: 24),
-              ),
-              onPressed: () => {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => home()))
-              },
-            ),
+            )
           ],
         ),
       )
