@@ -1,4 +1,5 @@
 import 'package:connect/Screens/home.dart';
+import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
 
 class signup extends StatefulWidget {
@@ -12,7 +13,7 @@ class _signupState extends State<signup> {
     h = MediaQuery.of(context).size.height;
     w = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Color(0xFFF1F1F1),
+      backgroundColor: bgrey,
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 0.1 * h, horizontal: 0.1 * w),
         child: Column(
@@ -23,7 +24,7 @@ class _signupState extends State<signup> {
               fontWeight: FontWeight.w600
             )),
             Text("ONE", style: TextStyle(
-              color: Color(0xFFF61B39),
+              color: cred,
               fontSize: 48,
               fontWeight: FontWeight.w600
             )),
@@ -113,7 +114,7 @@ class _signupState extends State<signup> {
                   value: false,
                 ),
                 Text("I have read and agreed with all the ", style: TextStyle(fontStyle: FontStyle.italic, fontSize: 10)),
-                Text("terms and conditions", style: TextStyle(color: Color(0xFFF61B39), fontStyle: FontStyle.italic, fontSize: 10))
+                Text("terms and conditions", style: TextStyle(color: cred, fontStyle: FontStyle.italic, fontSize: 10))
               ],
             ),
             FlatButton(
@@ -121,7 +122,7 @@ class _signupState extends State<signup> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30)
               ),
-              color: Color(0xFFF61B39),
+              color: cred,
               child: Text("Sign up", style: TextStyle(color: Colors.white, fontSize: 24),
               ),
               onPressed: () => {

@@ -1,4 +1,5 @@
 import 'package:connect/Screens/Onboarding/signup.dart';
+import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
 
 class login extends StatefulWidget {
@@ -12,7 +13,7 @@ class _loginState extends State<login> {
     h = MediaQuery.of(context).size.height;
     w = MediaQuery.of(context).size.width;
     return Scaffold( 
-      backgroundColor: Color(0xFFF1F1F1),
+      backgroundColor: bgrey,
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -63,7 +64,7 @@ class _loginState extends State<login> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text("Can't remember your password? ", style: TextStyle(fontStyle: FontStyle.italic),),
-                Text("reset here", style: TextStyle(color: Color(0xFFF61B39), fontStyle: FontStyle.italic))
+                Text("reset here", style: TextStyle(color: cred, fontStyle: FontStyle.italic))
               ],
             ),
             SizedBox(
@@ -74,7 +75,7 @@ class _loginState extends State<login> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30)
               ),
-              color: Color(0xFFF61B39),
+              color: cred,
               child: Text("Login", style: TextStyle(color: Colors.white, fontSize: 24),
               ),
               onPressed: () => {
@@ -112,7 +113,7 @@ class _loginState extends State<login> {
                   onTap: () {
                     Navigator.push(context,MaterialPageRoute(builder: (context) => signup()));
                   },
-                  child: Text("sign up", style: TextStyle(color: Color(0xFFF61B39), fontStyle: FontStyle.italic, fontSize: 18))
+                  child: Text("sign up", style: TextStyle(color: cred, fontStyle: FontStyle.italic, fontSize: 18))
                 )
               ],
             ),
