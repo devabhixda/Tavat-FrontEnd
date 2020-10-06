@@ -1,3 +1,4 @@
+import 'package:connect/Screens/around.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -160,7 +161,12 @@ class _placeState extends State<place> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Icon(Icons.favorite, color: Colors.red),
+                      IconButton(
+                        icon: Icon(Icons.favorite, color: Colors.red),
+                        onPressed: () => {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => around()))
+                        },
+                      ),
                       Container(width: 1, height: 0.04 * h, color: Colors.black),
                       Icon(Icons.home),
                       Container(width: 1, height: 0.04 * h, color: Colors.black),
