@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "276866275054",
+    "firebase_url": "https://connect-c9cfa.firebaseio.com",
+    "project_id": "connect-c9cfa",
+    "storage_bucket": "connect-c9cfa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:276866275054:android:bf6a2d12ddc3bf028f05ff",
+        "android_client_info": {
+          "package_name": "com.example.connect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "276866275054-mc4tltvdqf79mfq0b5brnbi19m0ustsm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.connect",
+            "certificate_hash": "fc8f25c7857d02f8079e5450faae10fd856066df"
+          }
+        },
+        {
+          "client_id": "276866275054-env0nl6rut5mc81fku6m60mj5k8ji7gj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuoGC1liXcrIFrFjWn8L7JTB65mMnAd9w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "276866275054-env0nl6rut5mc81fku6m60mj5k8ji7gj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
