@@ -1,20 +1,21 @@
+import 'package:connect/Screens/Onboarding/login.dart';
 import 'package:connect/Screens/Onboarding/signup.dart';
 import 'package:connect/Services/auth.dart';
+import 'package:connect/Services/firestore_func.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
 
-class login extends StatefulWidget {
-  final phone;
-  login({this.phone});
-  
+class phone extends StatefulWidget {
   @override
-  _loginState createState() => _loginState();
+  _phoneState createState() => _phoneState();
 }
-class _loginState extends State<login> {
+class _phoneState extends State<phone> {
 
-  String password;
+  String phone;
   double h,w;
+  bool exists;
   Auth auth = new Auth();
+  String errorText = "";
 
   @override    
   Widget build(BuildContext context) {    
@@ -23,7 +24,7 @@ class _loginState extends State<login> {
     return Scaffold( 
       backgroundColor: bgrey,
       resizeToAvoidBottomPadding: false,
-      body: Container(
+      body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
@@ -41,7 +42,7 @@ class _loginState extends State<login> {
                 child: TextField(
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: "Password"
+                    hintText: "Phone number",
                   ),
                   style: TextStyle(
                     fontSize: 24,
@@ -49,11 +50,14 @@ class _loginState extends State<login> {
                   ),
                   onChanged: (value) => {
                     setState(() {
-                      password = value;
+                      phone = value;
                     })
                   },
                 ),
               ),
+            ),
+            Text(
+              errorText, style: TextStyle(fontSize: 12, color: Colors.red)
             ),
             SizedBox(
               height: 0.1 * h,
@@ -67,7 +71,12 @@ class _loginState extends State<login> {
               child: Text("Next", style: TextStyle(color: Colors.white, fontSize: 24),
               ),
               onPressed: () => {
-                auth.signIn(widget.phone, password)
+                if(phone != null)
+                  getUserByPhone(phone).then((value) => value ? Navigator.push(context, MaterialPageRoute(builder: (context) => login(phone: phone))) : Navigator.push(context, MaterialPageRoute(builder: (context) => signup())))
+                else
+                  setState(() {
+                    errorText = "Please enter a valid phone number";
+                  })
               },
             ),
             Padding(
@@ -84,8 +93,7 @@ class _loginState extends State<login> {
                     child: Image(image: AssetImage('assets/images/google.png'), height: 0.08 * h)
                   ),
                   onTap: () => {
-                    print("[re"),
-                    auth.signInWithGoogle()
+                    auth.signInWithGoogle().then((value) => value ? Navigator.push(context, MaterialPageRoute(builder: (context) => login(phone: phone))) : Navigator.push(context, MaterialPageRoute(builder: (context) => signup())))
                   },
                 ),
                 SizedBox(width: 0.1 * w),
