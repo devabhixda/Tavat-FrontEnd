@@ -2,6 +2,7 @@ import 'package:connect/Screens/checkIn.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class home extends StatefulWidget {
   @override
@@ -11,7 +12,18 @@ class _homeState extends State<home> {
   double h,w;
   @override    
   Widget build(BuildContext context) {    
-    h = MediaQuery.of(context).size.height;
+  initState() {
+    super.initState();
+    setLogin();
+  }
+
+  setLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool login = prefs.getBool('login');
+    if(login == null) {
+      prefs.setBool('login', true);
+    }
+  }
     w = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: bgrey,

@@ -1,6 +1,8 @@
 import 'package:connect/Screens/Onboarding/phone.dart';
+import 'package:connect/Screens/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   runApp(Main());
@@ -22,7 +24,7 @@ class Tavat extends StatefulWidget {
 
 class _TavatState extends State<Tavat> {
 
-  bool loading = true;
+  bool loading = true, login = false;
 
   void initState() {
     super.initState();
@@ -31,6 +33,17 @@ class _TavatState extends State<Tavat> {
         loading = false;
       });
     });
+    checkLogin();
+  }
+
+  checkLogin() async {
+    SharedPreferences prefs =  await SharedPreferences.getInstance();
+    bool _login = prefs.getBool('login');
+    if(_login != null) {
+      setState(() {
+        login = _login;
+      });
+    }
   }
 
   @override
@@ -40,7 +53,7 @@ class _TavatState extends State<Tavat> {
         backgroundColor: Colors.white,
         body: loading ? Center(
           child: CircularProgressIndicator()
-        ) : phone() ,
+        ) : login ? home() : phone(),
       ),
     );
   }
