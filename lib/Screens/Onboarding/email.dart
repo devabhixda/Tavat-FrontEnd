@@ -1,22 +1,20 @@
-import 'package:connect/Screens/Onboarding/email.dart';
 import 'package:connect/Screens/Onboarding/login.dart';
-import 'package:connect/Screens/Onboarding/otp.dart';
 import 'package:connect/Screens/Onboarding/signup.dart';
-import 'package:connect/Screens/home.dart';
 import 'package:connect/Services/auth.dart';
 import 'package:connect/Services/firestore_func.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:email_validator/email_validator.dart';
 
-class phone extends StatefulWidget {
+class email extends StatefulWidget {
   @override
-  _phoneState createState() => _phoneState();
+  _emailState createState() => _emailState();
 }
-class _phoneState extends State<phone> {
+class _emailState extends State<email> {
 
-  String phone;
+  String email;
   double h,w;
   bool exists;
   Auth auth = new Auth();
@@ -47,8 +45,7 @@ class _phoneState extends State<phone> {
                 child: TextField(
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: "Phone number",
-                    prefix: Text("+91 ")
+                    hintText: "Email",
                   ),
                   style: GoogleFonts.ptSans(
                     fontSize: 24,
@@ -56,7 +53,7 @@ class _phoneState extends State<phone> {
                   ),
                   onChanged: (value) => {
                     setState(() {
-                      phone = value;
+                      email = value;
                     })
                   },
                 ),
@@ -77,55 +74,15 @@ class _phoneState extends State<phone> {
               child: Text("Next", style: TextStyle(color: Colors.white, fontSize: 24),
               ),
               onPressed: () => {
-                if(phone.length == 10) {
-                  setEmail(phone+"@tavat.in"),
-                  getUser(phone+"@tavat.in").then((value) => value ? Navigator.push(context, MaterialPageRoute(builder: (context) => login(phone: phone+"@tavat.in"))) : Navigator.push(context, MaterialPageRoute(builder: (context) => otp(phone: phone,))))
+                if(EmailValidator.validate(email)) {
+                  setEmail(email),
+                  getUser(email).then((value) => value ? Navigator.push(context, MaterialPageRoute(builder: (context) => login(phone: email))) : Navigator.push(context, MaterialPageRoute(builder: (context) => signup()))),
                 }
                 else
                   setState(() {
-                    errorText = "Please enter a valid phone number";
+                    errorText = "Please enter a valid email";
                   })
               },
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 0.05 * h, bottom: 0.03 * h),
-              child: Text("or login with"),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.white,
-                    child: Image(image: AssetImage('assets/images/google.png'), height: 0.08 * h)
-                  ),
-                  onTap: () => {
-                    auth.signInWithGoogle().then((value) => value ? Navigator.push(context, MaterialPageRoute(builder: (context) => home())) : Navigator.push(context, MaterialPageRoute(builder: (context) => signup())))
-                  },
-                ),
-                SizedBox(width: 0.1 * w),
-                GestureDetector(
-                  onTap: () => {
-                    
-                  },
-                  child: CircleAvatar(
-                    radius: 30,
-                    child: Image(image: AssetImage('assets/images/facebook.png'), height: 30),
-                  )
-                ),
-                SizedBox(width: 0.1 * w),
-                GestureDetector(
-                  onTap: () => {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => email()))
-                  },
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundColor: cred,
-                    child: Icon(Icons.email, color: Colors.white, size: 30)
-                  ),
-                )
-              ],
             ),
           ],
         ),

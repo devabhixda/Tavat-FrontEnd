@@ -4,23 +4,18 @@ FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-Future<void> addUser(String name, String phone, String email) {
+Future<void> addUser(String name, String email, String dob, String gender) {
   return users.add({
     'name': name,
-    'phone': phone,
-    'email': email 
+    'email': email,
+    'dob': dob,
+    'gender': gender
   })
   .then((value) => print("User Added"))
   .catchError((error) => print("Failed to add user: $error"));
 }
 
-Future<bool> getUserByPhone(String phone) async {
-  bool existing;
-  await users.where('phone', isEqualTo: phone).get().then((value) => value.size == 0 ? existing = false : existing = true);
-  return existing;
-}
-
-Future<bool> getUserByEmail(String email) async {
+Future<bool> getUser(String email) async {
   bool existing;
   await users.where('email', isEqualTo: email).get().then((value) => value.size == 0 ? existing = false : existing = true);
   return existing;

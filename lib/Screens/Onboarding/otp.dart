@@ -1,21 +1,26 @@
-import 'package:connect/Screens/Onboarding/signup.dart';
-import 'package:connect/Screens/home.dart';
 import 'package:connect/Services/auth.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class login extends StatefulWidget {
-  final phone;
-  login({this.phone});
-  
+class otp extends StatefulWidget {
+  otp({@required this.phone});
+  final String phone;
   @override
-  _loginState createState() => _loginState();
+  _otpState createState() => _otpState();
 }
-class _loginState extends State<login> {
+class _otpState extends State<otp> {
 
-  String password;
+  String otp;
   double h,w;
+  bool exists;
+  String errorText = "";
   Auth auth = new Auth();
+
+  void initState() {
+    super.initState();
+    auth.verifyPhone("+91"+widget.phone, context);
+  }
 
   @override    
   Widget build(BuildContext context) {    
@@ -24,7 +29,7 @@ class _loginState extends State<login> {
     return Scaffold( 
       backgroundColor: bgrey,
       resizeToAvoidBottomPadding: false,
-      body: Container(
+      body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
@@ -42,20 +47,22 @@ class _loginState extends State<login> {
                 child: TextField(
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: "Password"
+                    hintText: "OTP",
                   ),
-                  obscureText: true,
-                  style: TextStyle(
+                  style: GoogleFonts.ptSans(
                     fontSize: 24,
                     fontStyle: FontStyle.italic
                   ),
                   onChanged: (value) => {
                     setState(() {
-                      password = value;
+                      otp = value;
                     })
                   },
                 ),
               ),
+            ),
+            Text(
+              errorText, style: TextStyle(fontSize: 12, color: Colors.red)
             ),
             SizedBox(
               height: 0.1 * h,
@@ -69,29 +76,7 @@ class _loginState extends State<login> {
               child: Text("Next", style: TextStyle(color: Colors.white, fontSize: 24),
               ),
               onPressed: () => {
-                auth.signIn(widget.phone, password).then(
-                  (value) => 
-                    value ? Navigator.push(context, MaterialPageRoute(builder: (context) => home())) : 
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("Password incorrect",
-                          ),
-                          content: Text("Your password looks incorrect, please check"),
-                          actions: [
-                            FlatButton(
-                              child: Text("OK"
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ],
-                        );
-                      },
-                    )
-                  )
+                auth.verifyOtp(widget.phone, otp, context)
               },
             ),
           ],

@@ -1,7 +1,10 @@
 import 'package:connect/Screens/home.dart';
 import 'package:connect/Services/auth.dart';
+import 'package:connect/Services/firestore_func.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class signup extends StatefulWidget {
   @override
@@ -9,9 +12,26 @@ class signup extends StatefulWidget {
 }
 class _signupState extends State<signup> {
   double h,w;
-  String email, phone, ptemp, password, otp;
+  String email, name, ptemp, password, gender;
+  bool tnc = false;
+  int _radiobtnvalue = -1;
   Auth auth = new Auth();
+  DateTime pickedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    getEmail();
+  }
   
+  getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String e = prefs.getString("email");
+    setState(() {
+      email = e;
+    });
+  }
+
   @override    
   Widget build(BuildContext context) {    
     h = MediaQuery.of(context).size.height;
@@ -44,15 +64,15 @@ class _signupState extends State<signup> {
                 child: TextField(
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: "email"
+                    hintText: "Name"
                   ),
-                  style: TextStyle(
+                  style: GoogleFonts.ptSans(
                     fontSize: 24,
                     fontStyle: FontStyle.italic
                   ),
                   onChanged: (value) => {
                     setState(() {
-                      email = value;
+                      name = value;
                     })
                   },
                 ),
@@ -66,22 +86,31 @@ class _signupState extends State<signup> {
               elevation: 5,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                child: TextField(
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "phone number"
+                child: ListTile(
+                  title: pickedDate == null ? Text("D.O.B",
+                    style: GoogleFonts.ptSans(
+                      fontSize: 24,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey
+                    ),
+                  ): Text("${pickedDate.day}-${pickedDate.month}-${pickedDate.year}",
+                    style: GoogleFonts.ptSans(
+                      fontSize: 22,
+                      fontStyle: FontStyle.italic
+                    ),
                   ),
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontStyle: FontStyle.italic
-                  ),
-                  onChanged: (value) => {
-                    setState(() {
-                      phone = value;
-                    })
-                  },
+                  trailing: Icon(Icons.keyboard_arrow_down),
+                  onTap: _pickDate,
                 ),
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                addRadio(0, 'Male'),
+                addRadio(1, 'Female'),
+                addRadio(2, 'Others'),
+              ],
             ),
             Card(
               margin: EdgeInsets.only(top: 0.02 * h, bottom: 0.01 * h),
@@ -138,7 +167,9 @@ class _signupState extends State<signup> {
             Row(
               children: [
                 Checkbox(
-                  value: false,
+                  value: tnc,
+                  onChanged: terms,
+                  activeColor: cred,
                 ),
                 Text("I have read and agreed with all the ", style: TextStyle(fontStyle: FontStyle.italic, fontSize: 10)),
                 Text("terms and conditions", style: TextStyle(color: cred, fontStyle: FontStyle.italic, fontSize: 10))
@@ -174,34 +205,30 @@ class _signupState extends State<signup> {
                         );
                       },
                     )
-                  } else {
-                    auth.createAccount(email, password),
-                    auth.verifyPhone(phone, context),
+                  } else if(!tnc) {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text("Enter yout otp",
+                          title: Text("Terms and Conditions",
                           ),
-                          content: TextField(
-                            onChanged: (value) => {
-                              otp = value
-                            },
-                          ),
+                          content: Text("Please agree to the terms and conditions before proceeding."),
                           actions: [
                             FlatButton(
-                              child: Text("Verify"
+                              child: Text("OK"
                               ),
                               onPressed: () {
-                                auth.verifyOtp(otp).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) => home())));
+                                Navigator.of(context).pop();
                               },
                             )
                           ],
                         );
                       },
                     )
+                  } else {
+                    auth.createAccount(email, password),
+                    addUser(name, email, pickedDate.toIso8601String(), gender).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) => home()))),
                   }
-                  //Navigator.push(context, MaterialPageRoute(builder: (context) => home()))
                 },
               ),
             )
@@ -209,5 +236,59 @@ class _signupState extends State<signup> {
         ),
       )
     );
+  }
+
+  _pickDate() async {
+   DateTime date = await showDatePicker(
+      context: context,
+      firstDate: DateTime(DateTime.now().year - 100),
+      lastDate: DateTime(DateTime.now().year+5),
+      initialDate: DateTime.now(),
+    );
+
+    if(date != null)
+      setState(() {
+        pickedDate = date;
+      });
+  }
+
+  Row addRadio(int btnValue, String title) {
+    return Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: <Widget>[
+      Radio(
+        activeColor: cred,
+        value: btnValue,
+        groupValue: _radiobtnvalue,
+        onChanged: _handleradiobutton,
+      ),
+      Text(title)
+    ],
+    );
+  }
+
+  void _handleradiobutton(int value) {
+    setState(() {
+      _radiobtnvalue = value;
+      switch (value) {
+        case 0:
+          gender = "male";
+          break;
+        case 1:
+          gender = "female";
+          break;
+        case 2:
+          gender = 'other';
+          break;
+        default:
+          gender = null;
+      }
+    });
+  }
+
+  void terms(bool value) {
+    setState(() {
+      tnc = value;
+    });
   }
 }
