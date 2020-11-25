@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:geolocator/geolocator.dart';
+import 'package:connect/Models/place.dart';
+import 'package:connect/Services/nearby.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class home extends StatefulWidget {
   @override
@@ -12,6 +16,9 @@ class home extends StatefulWidget {
 class _homeState extends State<home> {
 
   int selected = 2;
+  Position position = new Position(latitude: 0, longitude: 0);
+  List<PlaceDetail> places;
+  double w,h;
 
   initState() {
     super.initState();
@@ -24,23 +31,45 @@ class _homeState extends State<home> {
     if(login == null) {
       prefs.setBool('login', true);
     }
+    position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print(await getNearbyPlaces(position.latitude, position.longitude, 10));
   }
 
   Completer<GoogleMapController> _controller = Completer();
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
 
   @override
   Widget build(BuildContext context) {
+    w = MediaQuery.of(context).size.width;
+    h = MediaQuery.of(context).size.height;
     return new Scaffold(
-      body: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: _kGooglePlex,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-        },
+      body: SlidingUpPanel(
+        body: GoogleMap(
+          mapType: MapType.normal,
+          initialCameraPosition: CameraPosition(
+            target: LatLng(position.latitude, position.longitude)
+          ),
+          onMapCreated: (GoogleMapController controller) {
+            _controller.complete(controller);
+          },
+        ),
+        panel: Center(
+          child: Text("This is the sliding Widget"),
+        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+        minHeight: 0.2 * h,
+        collapsed: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(0.02 * h),
+              child: Text("Check-In Nearby",
+                style: GoogleFonts.ptSans(
+                  fontSize: 20
+                )
+              )
+            ),
+            
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: cred,
@@ -76,7 +105,7 @@ class _homeState extends State<home> {
     );
   }
 
-    void _onItemTapped(int index) {
+  void _onItemTapped(int index) {
     setState(() {
       selected = index;
     });
