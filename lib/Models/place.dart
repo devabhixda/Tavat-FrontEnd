@@ -3,6 +3,7 @@ class PlaceDetail{
   String id;
   String name;
   String rating;
-
-  PlaceDetail(this.id,this.name,this.icon,this.rating);
+  double lat;
+  double lng;
+  PlaceDetail(this.id,this.name,this.icon,this.rating, this.lat, this.lng);
 }
