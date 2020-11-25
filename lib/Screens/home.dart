@@ -16,9 +16,11 @@ class home extends StatefulWidget {
 class _homeState extends State<home> {
 
   int selected = 2;
-  Position position = new Position(latitude: 0, longitude: 0);
+  Position currentLocation;
   List<PlaceDetail> places;
   double w,h;
+  GoogleMapController mapController;
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
 
   initState() {
     super.initState();
@@ -31,25 +33,54 @@ class _homeState extends State<home> {
     if(login == null) {
       prefs.setBool('login', true);
     }
-    position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print(await getNearbyPlaces(position.latitude, position.longitude, 10));
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+    .then((Position position) async {
+        setState(() {
+          currentLocation = position;
+        });
+        places = await getNearbyPlaces(position.latitude, position.longitude, 1000).then(
+          (List<PlaceDetail> curr) {
+            print(curr.length);
+            for (int i = 0; i < curr.length; i++) {
+              var markerIdVal = markers.length + 1;
+              String mar = markerIdVal.toString();
+              final MarkerId markerId = MarkerId(mar);
+              LatLng latLng = new LatLng(curr[i].lat, curr[i].lng);
+              final Marker marker = Marker(
+                markerId: markerId, 
+                position: latLng,
+                onTap: () => {
+                  print(curr[i])
+                }
+              );
+              setState(() {
+                markers[markerId] = marker;
+              });
+            }
+          }
+        );
+      }).catchError((e) {
+        print(e);
+      }
+    );
   }
-
-  Completer<GoogleMapController> _controller = Completer();
 
   @override
   Widget build(BuildContext context) {
     w = MediaQuery.of(context).size.width;
     h = MediaQuery.of(context).size.height;
-    return new Scaffold(
+    return Scaffold(
       body: SlidingUpPanel(
         body: GoogleMap(
           mapType: MapType.normal,
           initialCameraPosition: CameraPosition(
-            target: LatLng(position.latitude, position.longitude)
+          target: LatLng(
+            currentLocation.latitude,
+            currentLocation.longitude),
+            zoom: 15
           ),
-          onMapCreated: (GoogleMapController controller) {
-            _controller.complete(controller);
+          onMapCreated: _onMapCreated,
+          markers: Set<Marker>.of(markers.values)
           },
         ),
         panel: Center(
@@ -105,6 +136,11 @@ class _homeState extends State<home> {
     );
   }
 
+  void _onMapCreated(GoogleMapController controller) {
+    setState(() {
+      mapController = controller;
+    });
+  }
   void _onItemTapped(int index) {
     setState(() {
       selected = index;
