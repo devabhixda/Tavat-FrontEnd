@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:connect/Models/place.dart';
 import 'package:connect/Services/nearby.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class home extends StatefulWidget {
   @override
@@ -71,7 +73,7 @@ class _homeState extends State<home> {
     h = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SlidingUpPanel(
-        body: GoogleMap(
+        body: currentLocation !=null ? GoogleMap(
           mapType: MapType.normal,
           initialCameraPosition: CameraPosition(
           target: LatLng(
@@ -81,7 +83,9 @@ class _homeState extends State<home> {
           ),
           onMapCreated: _onMapCreated,
           markers: Set<Marker>.of(markers.values)
-          },
+        ) : SpinKitDoubleBounce(
+          color: cred,
+          size: 30.0,
         ),
         panel: Center(
           child: Text("This is the sliding Widget"),
