@@ -1,3 +1,5 @@
+import 'package:connect/Screens/around.dart';
+import 'package:connect/Screens/Chat.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:connect/Screens/home.dart';
@@ -9,7 +11,7 @@ class Base extends StatefulWidget {
 class _BaseState extends State<Base> {
   double w,h;
   int selected = 2;
-  List<Widget> _widgetOptions = [Home(), Home(), Home(), Home(), Home()];
+  List<Widget> _widgetOptions = [Home(), Home(), Home(), Around(), Chat()];
 
   @override
   Widget build(BuildContext context) {
