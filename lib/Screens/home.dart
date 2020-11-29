@@ -1,5 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
+import 'package:connect/Screens/around.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -12,13 +11,11 @@ import 'package:connect/Services/nearby.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-class home extends StatefulWidget {
+class Home extends StatefulWidget {
   @override
-  _homeState createState() => _homeState();
+  _HomeState createState() => _HomeState();
 }
-class _homeState extends State<home> {
-
-  int selected = 2;
+class _HomeState extends State<Home> {
   Position currentLocation;
   List<PlaceDetail> places;
   double w,h;
@@ -151,7 +148,41 @@ class _homeState extends State<home> {
                       elevation: 5,
                       color: cred,
                       onPressed: () => {
-                        print("yes")
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: cred,
+                              title: Text("Check In as",
+                                style: GoogleFonts.ptSans(
+                                  color: Colors.white
+                                ),
+                              ),
+                              content: TextField(
+                                decoration: InputDecoration(
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderSide: const BorderSide(color: Colors.white, width: 1.5),
+                                  ),
+                                ),
+                              ),
+                              actions: [
+                                RaisedButton(
+                                  onPressed: () => {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => Around()))
+                                  },
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                  color: Colors.white,
+                                  child: Text("Check In",
+                                    style: GoogleFonts.ptSans(
+                                      color: cred,
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                )
+                              ],
+                            );
+                          }
+                        )
                       },
                       child: Text("Check In",
                         style: GoogleFonts.ptSans(
@@ -284,48 +315,12 @@ class _homeState extends State<home> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: cred,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        selectedFontSize: 0,
-        unselectedFontSize: 0,
-        currentIndex: selected,
-        onTap: _onItemTapped,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: ""
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: ""
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: ""
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: ""
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: ""
-          ),
-        ],
-      ),
     );
   }
 
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
       mapController = controller;
-    });
-  }
-  void _onItemTapped(int index) {
-    setState(() {
-      selected = index;
     });
   }
 }
