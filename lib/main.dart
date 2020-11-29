@@ -1,5 +1,5 @@
 import 'package:connect/Screens/Onboarding/phone.dart';
-import 'package:connect/Screens/home.dart';
+import 'package:connect/Screens/base.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,7 +53,7 @@ class _TavatState extends State<Tavat> {
         backgroundColor: Colors.white,
         body: loading ? Center(
           child: CircularProgressIndicator()
-        ) : login ? home() : phone(),
+        ) : login ? Base() : phone(),
       ),
     );
   }
