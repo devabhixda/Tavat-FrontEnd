@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +24,9 @@ class _homeState extends State<home> {
   double w,h;
   GoogleMapController mapController;
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  PanelController _pc = new PanelController();
+  int selectedPlace = 0;
+  bool panelOpen = false;
 
   initState() {
     super.initState();
@@ -35,36 +39,35 @@ class _homeState extends State<home> {
     if(login == null) {
       prefs.setBool('login', true);
     }
-    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
     .then((Position position) async {
         setState(() {
           currentLocation = position;
         });
-        places = await getNearbyPlaces(position.latitude, position.longitude, 1000).then(
-          (List<PlaceDetail> curr) {
-            print(curr.length);
-            for (int i = 0; i < curr.length; i++) {
-              var markerIdVal = markers.length + 1;
-              String mar = markerIdVal.toString();
-              final MarkerId markerId = MarkerId(mar);
-              LatLng latLng = new LatLng(curr[i].lat, curr[i].lng);
-              final Marker marker = Marker(
-                markerId: markerId, 
-                position: latLng,
-                onTap: () => {
-                  print(curr[i])
-                }
-              );
-              setState(() {
-                markers[markerId] = marker;
-              });
-            }
-          }
-        );
       }).catchError((e) {
         print(e);
       }
     );
+    List<PlaceDetail> temp = await getNearbyPlaces(currentLocation.latitude, currentLocation.longitude, 1000);
+    setState(() {
+      places = temp;
+    });
+    for (int i = 0; i < places.length; i++) {
+      var markerIdVal = markers.length + 1;
+      String mar = markerIdVal.toString();
+      final MarkerId markerId = MarkerId(mar);
+      LatLng latLng = new LatLng(places[i].lat, places[i].lng);
+      final Marker marker = Marker(
+        markerId: markerId, 
+        position: latLng,
+        onTap: () => {
+          print(places[i])
+        }
+      );
+      setState(() {
+        markers[markerId] = marker;
+      });
+    }
   }
 
   @override
@@ -73,6 +76,7 @@ class _homeState extends State<home> {
     h = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SlidingUpPanel(
+        controller: _pc,
         body: currentLocation !=null ? GoogleMap(
           mapType: MapType.normal,
           initialCameraPosition: CameraPosition(
@@ -87,11 +91,139 @@ class _homeState extends State<home> {
           color: cred,
           size: 30.0,
         ),
-        panel: Center(
-          child: Text("This is the sliding Widget"),
+        panel: panelOpen ? Column(
+          children: [
+            AppBar(
+              title: Text("Check-In",
+                style: GoogleFonts.ptSans(
+                  fontSize: 20,
+                  color: Colors.black
+                )
+              ),
+              backgroundColor: Colors.white,
+              elevation: 0,
+              centerTitle: true,
+              toolbarHeight: 0.05 * h,
+              leading: IconButton(
+                icon: Icon(Icons.keyboard_arrow_left),
+                color: Colors.black,
+                onPressed: () => {
+                  setState(() {
+                    panelOpen = false;
+                  }),
+                  _pc.close(),
+                },
+              ),
+            ),
+            Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                Container(
+                  width: w,
+                  height: 0.25 * h,
+                  padding: EdgeInsets.symmetric(horizontal: 0.05 * w),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: FittedBox(
+                      child: Image.network(places[selectedPlace].photoref),
+                      fit: BoxFit.cover,
+                    )
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 0.1 * w, bottom: 10),
+                      child: Text(places[selectedPlace].name, 
+                      style: GoogleFonts.ptSans(
+                        fontSize: 20,
+                        color: Colors.white
+                      )
+                    )
+                  )
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 0.1 * w),
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      elevation: 5,
+                      color: cred,
+                      onPressed: () => {
+                        print("yes")
+                      },
+                      child: Text("Check In",
+                        style: GoogleFonts.ptSans(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    )
+                  )
+                )
+              ],
+            ),
+            SizedBox(
+              height: 0.02 * h,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.location_on, color: Colors.red, size: 32),
+                Text('28 Users checked in in last 2 hours', style: TextStyle(color: Colors.red, fontSize: 16))
+              ],
+            ),
+            SizedBox(
+              height: 0.02 * h,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('In the spotlight', 
+                  style: TextStyle(
+                    fontSize: 0.05 * w,
+                    color: const Color(0xff4f4f4f)
+                  )
+                ),
+                SizedBox(
+                  width: 0.1 * w,
+                ),
+                Text("M", style: GoogleFonts.ptSans(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 0.05 * w
+                )),
+                Text("/", style: GoogleFonts.ptSans(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 0.05 * w
+                )),
+                Text("F ", style: GoogleFonts.ptSans(
+                  color: cred,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 0.05 * w
+                )),
+                Text("Ratio: ", style: GoogleFonts.ptSans(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 0.05 * w
+                )),
+                Text("40%", style: GoogleFonts.ptSans(
+                  fontWeight: FontWeight.bold,
+                  color: cred,
+                  fontSize: 0.05 * w
+                )),
+              ],
+            ),
+            SizedBox(
+              height: 0.02 * h,
+            ),
+            Text(places[selectedPlace].vincinity)
+          ],
+        ) : Center(
+          child: Text("Please select a nearby place first"),
         ),
         borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-        minHeight: 0.2 * h,
+        minHeight: 0.25 * h,
         collapsed: Column(
           children: [
             Padding(
@@ -102,7 +234,53 @@ class _homeState extends State<home> {
                 )
               )
             ),
-            
+            places != null ? Container(
+              padding: EdgeInsets.symmetric(horizontal: 0.05 * w),
+              height: 0.15 * h,
+              child: ListView.builder(
+                itemCount: places.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    onTap: () => {
+                      setState(() {
+                        selectedPlace = index;
+                        panelOpen = true;
+                      }),
+                      _pc.open()
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: 0.4 * w,
+                          height: 0.15 * h,
+                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: FittedBox(
+                              child: Image.network(places[index].photoref),
+                              fit: BoxFit.cover,
+                            )
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Text(places[index].name, 
+                            style: GoogleFonts.ptSans(
+                              color: Colors.white
+                            )
+                          )
+                        )
+                      ],
+                    )
+                  );
+                }
+              )
+            ) : SpinKitDoubleBounce(
+              color: cred,
+              size: 30.0,
+            ),
           ],
         ),
       ),
