@@ -5,5 +5,7 @@ class PlaceDetail{
   String rating;
   double lat;
   double lng;
-  PlaceDetail(this.id,this.name,this.icon,this.rating, this.lat, this.lng);
+  String photoref;
+  String vincinity;
+  PlaceDetail(this.id,this.name,this.icon,this.rating, this.lat, this.lng, this.photoref, this.vincinity);
 }
