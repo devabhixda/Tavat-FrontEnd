@@ -1,85 +1,44 @@
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class chat extends StatefulWidget {
+class Chat extends StatefulWidget {
   @override
-  _chatState createState() => _chatState();
+  _ChatState createState() => _ChatState();
 }
-class _chatState extends State<chat> {
+class _ChatState extends State<Chat> {
   double h,w;
   @override    
   Widget build(BuildContext context) {    
     h = MediaQuery.of(context).size.height;
     w = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: bgrey,
       appBar: AppBar(
-        backgroundColor: cred,
-        title: Row(
-          children: [
-            CircleAvatar(),
-            SizedBox(
-              width: 10,
-            ),
-            Center(child: Text("Person"),),
-          ],
+        centerTitle: true,
+        title: Text("Chat", 
+          style: GoogleFonts.ptSans(
+            fontSize: 24,
+            color: Colors.black
+          )
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.more_vert, color: Colors.white),
+        backgroundColor: Colors.white,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.only(top: 0.02 * h),
+              itemCount: 15,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 0.1 * w),
+                  leading: CircleAvatar(),
+                  title: Text("Person"),
+                );
+              }
+            ),
           )
         ],
-      ),
-      resizeToAvoidBottomPadding: false,
-      resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        reverse: true,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 10),
-          child: Column(
-            children: [
-              Container(
-                height: 0.8 * h,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 0.8 * w,
-                    height: 0.06 * h,
-                    child: new Theme(
-                      data: new ThemeData(
-                        primaryColor: cred,
-                        primaryColorDark: cred,
-                      ),
-                      child: TextField(
-                        textAlignVertical: TextAlignVertical.bottom,
-                        cursorColor: cred,
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(color: cred),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(color: cred)
-                          ),
-                          hintText: "Type a message",
-                          suffixIcon: Icon(Icons.camera, color: cred),
-                        ),
-                      ),
-                    )
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.send, color: cred, size: 32),
-                  )
-                ],
-              ),
-            ],
-          )
-        )
       )
     );
   }
