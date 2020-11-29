@@ -71,7 +71,7 @@ class _loginState extends State<login> {
               onPressed: () => {
                 auth.signIn(widget.phone, password).then(
                   (value) => 
-                    value ? Navigator.push(context, MaterialPageRoute(builder: (context) => home())) : 
+                    value ? Navigator.push(context, MaterialPageRoute(builder: (context) => Home())) : 
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {

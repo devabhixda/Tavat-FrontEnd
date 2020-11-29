@@ -124,6 +124,6 @@ class Auth{
   onVerify(String phone, BuildContext context) async {
     bool exists;
     await getUser(phone).then((value) => exists = value);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => exists ? home() : signup()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => exists ? Home() : signup()));
   }
 }

@@ -227,7 +227,7 @@ class _signupState extends State<signup> {
                     )
                   } else {
                     auth.createAccount(email, password),
-                    addUser(name, email, pickedDate.toIso8601String(), gender).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) => home()))),
+                    addUser(name, email, pickedDate.toIso8601String(), gender).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) => Home()))),
                   }
                 },
               ),

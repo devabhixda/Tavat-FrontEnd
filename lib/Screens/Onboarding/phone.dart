@@ -106,7 +106,7 @@ class _phoneState extends State<phone> {
                     child: Image(image: AssetImage('assets/images/google.png'), height: 0.08 * h)
                   ),
                   onTap: () => {
-                    auth.signInWithGoogle().then((value) => value ? Navigator.push(context, MaterialPageRoute(builder: (context) => home())) : Navigator.push(context, MaterialPageRoute(builder: (context) => signup())))
+                    auth.signInWithGoogle().then((value) => value ? Navigator.push(context, MaterialPageRoute(builder: (context) => Home())) : Navigator.push(context, MaterialPageRoute(builder: (context) => signup())))
                   },
                 ),
                 SizedBox(width: 0.1 * w),
