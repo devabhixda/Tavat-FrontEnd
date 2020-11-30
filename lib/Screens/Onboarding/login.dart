@@ -1,5 +1,5 @@
 import 'package:connect/Screens/Onboarding/signup.dart';
-import 'package:connect/Screens/home.dart';
+import 'package:connect/Screens/base.dart';
 import 'package:connect/Services/auth.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +71,7 @@ class _loginState extends State<login> {
               onPressed: () => {
                 auth.signIn(widget.phone, password).then(
                   (value) => 
-                    value ? Navigator.push(context, MaterialPageRoute(builder: (context) => Home())) : 
+                    value ? Navigator.push(context, MaterialPageRoute(builder: (context) => Base())) : 
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {

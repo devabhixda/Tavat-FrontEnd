@@ -1,4 +1,4 @@
-import 'package:connect/Screens/home.dart';
+import 'package:connect/Screens/base.dart';
 import 'package:connect/Services/auth.dart';
 import 'package:connect/Services/firestore_func.dart';
 import 'package:connect/consts.dart';
@@ -227,7 +227,7 @@ class _signupState extends State<signup> {
                     )
                   } else {
                     auth.createAccount(email, password),
-                    addUser(name, email, pickedDate.toIso8601String(), gender).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) => Home()))),
+                    addUser(name, email, pickedDate.toIso8601String(), gender).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) => Base()))),
                   }
                 },
               ),

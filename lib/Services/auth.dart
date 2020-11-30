@@ -1,5 +1,5 @@
 import 'package:connect/Screens/Onboarding/signup.dart';
-import 'package:connect/Screens/home.dart';
+import 'package:connect/Screens/base.dart';
 import 'package:connect/Services/firestore_func.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -124,6 +124,6 @@ class Auth{
   onVerify(String phone, BuildContext context) async {
     bool exists;
     await getUser(phone).then((value) => exists = value);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => exists ? Home() : signup()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => exists ? Base() : signup()));
   }
 }
