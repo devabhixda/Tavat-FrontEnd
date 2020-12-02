@@ -1,7 +1,7 @@
 import 'package:connect/Screens/ChatBox.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:connect/Screens/Person.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Around extends StatefulWidget {
@@ -76,11 +76,16 @@ class _AroundState extends State<Around> {
                                 ),
                                 IconButton(
                                   icon: Icon(Icons.message, color: cred, size: 0.08 * w), 
-                                  onPressed: null
+                                  onPressed: () => {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatBox()))
+                                  },
                                 ),
                               ],
                             ),
-                          )
+                          ),
+                          onTap: () => {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => Person()))
+                          },
                         );
                       }
                     ),
@@ -105,11 +110,15 @@ class _AroundState extends State<Around> {
                               children: [
                                 IconButton(
                                   icon: Icon(Icons.wine_bar, color: cred, size: 0.08 * w), 
-                                  onPressed: null
+                                  onPressed: () => {
+                                    
+                                  }
                                 ),
                                 IconButton(
                                   icon: Icon(Icons.message, color: cred, size: 0.08 * w), 
-                                  onPressed: null
+                                  onPressed: () => {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatBox()))
+                                  },
                                 ),
                               ],
                             ),

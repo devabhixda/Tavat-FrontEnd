@@ -1,4 +1,4 @@
-import 'package:connect/consts.dart';
+import 'package:connect/Screens/ChatBox.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -34,6 +34,9 @@ class _ChatState extends State<Chat> {
                   contentPadding: EdgeInsets.symmetric(horizontal: 0.1 * w),
                   leading: CircleAvatar(),
                   title: Text("Person"),
+                  onTap: () => {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatBox()))
+                  },
                 );
               }
             ),
