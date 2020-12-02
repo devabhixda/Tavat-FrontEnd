@@ -113,7 +113,10 @@ class _AroundState extends State<Around> {
                                 ),
                               ],
                             ),
-                          )
+                          ),
+                          onTap: () => {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => Person()))
+                          },
                         );
                       }
                     ),
