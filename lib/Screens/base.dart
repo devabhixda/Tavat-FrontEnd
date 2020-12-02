@@ -1,3 +1,5 @@
+import 'package:connect/Screens/History.dart';
+import 'package:connect/Screens/Profile.dart';
 import 'package:connect/Screens/around.dart';
 import 'package:connect/Screens/Chat.dart';
 import 'package:connect/consts.dart';
@@ -11,7 +13,7 @@ class Base extends StatefulWidget {
 class _BaseState extends State<Base> {
   double w,h;
   int selected = 2;
-  List<Widget> _widgetOptions = [Home(), Home(), Home(), Around(), Chat()];
+  List<Widget> _widgetOptions = [Profile(), History(), Home(), Around(), Chat()];
 
   @override
   Widget build(BuildContext context) {
