@@ -1,14 +1,51 @@
+import 'package:connect/Models/user.dart';
 import 'package:connect/Screens/ChatBox.dart';
+import 'package:connect/Services/auth.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:connect/Screens/Person.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Around extends StatefulWidget {
+  final location;
+  Around({this.location});
   @override
   _AroundState createState() => _AroundState();
 }
 class _AroundState extends State<Around> {
+
+  String location;
+
+  void initState() {
+    super.initState();
+    setState(() {
+      location = widget.location;
+    });
+    getAround();
+  }
+
+  Auth auth = new Auth();
+  List<UserDetail> users;
+
+  getAround() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(location == "not set") {
+      String loc = prefs.getString('location');
+      if(loc != null) {
+        setState(() {
+          location = loc;
+        });
+      }
+    }
+    List<UserDetail> lst;
+    lst = await auth.getNearbyUsers(location);
+    setState(() {
+      users = lst;
+    });
+  }
+
   double h,w;
   @override    
   Widget build(BuildContext context) {
@@ -54,17 +91,29 @@ class _AroundState extends State<Around> {
           ),
           body: TabBarView(
             children: [
-              Column(
+              location == "not set" ? Center(
+                child: Text("Please check in First",
+                  style: GoogleFonts.ptSans(
+                    fontSize: 24
+                  ),
+                )
+              ) : users != null ? users.length == 1 ? Center(
+                child: Text("There is no one around",
+                  style: GoogleFonts.ptSans(
+                    fontSize: 24
+                  ),
+                )
+              ) : Column(
                 children: [
                   Expanded(
                     child: ListView.builder(
                       padding: EdgeInsets.only(top: 0.05 * h),
-                      itemCount: 15,
+                      itemCount: users.length,
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
                           contentPadding: EdgeInsets.symmetric(horizontal: 0.1 * w),
                           leading: CircleAvatar(),
-                          title: Text("Person"),
+                          title: Text(users[index].name),
                           trailing: Container(
                             width: 0.3 * w,
                             child: Row(
@@ -91,6 +140,9 @@ class _AroundState extends State<Around> {
                     ),
                   ),
                 ],
+              ) : SpinKitDoubleBounce(
+                color: cred,
+                size: 30.0,
               ),
               Column(
                 children: [

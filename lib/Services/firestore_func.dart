@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-Future<void> addUser(String name, String email, String dob, String gender) {
-  return users.add({
+Future<void> addUser(UserCredential cred, String name, String email, String dob, String gender) {
+  return users.doc(cred.user.uid).set({
     'name': name,
     'email': email,
     'dob': dob,
     'gender': gender
   })
-  .then((value) => print("User Added"))
   .catchError((error) => print("Failed to add user: $error"));
 }
 

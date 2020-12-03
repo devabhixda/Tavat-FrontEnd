@@ -1,3 +1,4 @@
+import 'package:connect/Models/user.dart';
 import 'package:connect/Screens/Onboarding/signup.dart';
 import 'package:connect/Screens/base.dart';
 import 'package:connect/Services/firestore_func.dart';
@@ -16,12 +17,22 @@ class Auth{
   String _verificationId;
   GoogleSignIn googleSignIn = GoogleSignIn();
 
-  createAccount(String email, String password) async {
+  createAccount(String email, String password, String name, String dob, String gender) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password
-      );
+      ).then((cred) async {
+        _firestore.collection('users').doc(cred.user.uid).set({
+          'email': email,
+          'name': name,
+          'dob': dob,
+          'gender': gender
+        });
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('uid', cred.user.uid);
+        return cred;
+      });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -125,5 +136,28 @@ class Auth{
     bool exists;
     await getUser(phone).then((value) => exists = value);
     Navigator.push(context, MaterialPageRoute(builder: (context) => exists ? Base() : signup()));
+  }
+
+  checkIn(String uid, String location, String checkName) async {
+    await _firestore.collection('users').doc(uid).update({
+      'location': location,
+      'checkName': checkName
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('location', location);
+  }
+
+  getNearbyUsers(String location) async {
+    List<UserDetail> lst = [];
+    QuerySnapshot qs =  await _firestore.collection('users').where('location', isEqualTo: location).get();
+    for(int i=0;i<qs.docs.length;i++) {
+      String name;
+      await _firestore.collection('users').doc(qs.docs.elementAt(i).id).get().then((val) => {
+        name = val.data()['name']
+      });
+      UserDetail user = new UserDetail(qs.docs.elementAt(i).id, name);
+      lst.add(user);  
+    }
+    return lst;
   }
 }

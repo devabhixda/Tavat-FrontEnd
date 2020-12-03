@@ -1,4 +1,5 @@
-import 'package:connect/Screens/around.dart';
+import 'package:connect/Screens/Around.dart';
+import 'package:connect/Services/auth.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -10,6 +11,7 @@ import 'package:connect/Models/place.dart';
 import 'package:connect/Services/nearby.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:toast/toast.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -24,6 +26,9 @@ class _HomeState extends State<Home> {
   PanelController _pc = new PanelController();
   int selectedPlace = 0;
   bool panelOpen = false;
+  String uid;
+  Auth auth = new Auth();
+  String checkName;
 
   initState() {
     super.initState();
@@ -36,6 +41,10 @@ class _HomeState extends State<Home> {
     if(login == null) {
       prefs.setBool('login', true);
     }
+    String user = prefs.getString('uid');
+    setState(() {
+      uid = user;
+    });
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
     .then((Position position) async {
         setState(() {
@@ -164,11 +173,22 @@ class _HomeState extends State<Home> {
                                     borderSide: const BorderSide(color: Colors.white, width: 1.5),
                                   ),
                                 ),
+                                onChanged: (value) => {
+                                  setState(() {
+                                    checkName = value;
+                                  })
+                                },
                               ),
                               actions: [
                                 RaisedButton(
                                   onPressed: () => {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => Around()))
+                                    if(checkName != null) {
+                                      auth.checkIn(uid, places[selectedPlace].name, checkName),
+                                      Navigator.pop(context),
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Around(location: places[selectedPlace].name)))
+                                    } else {
+                                      Toast.show("Name cannot be empty", context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM)
+                                    }
                                   },
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                                   color: Colors.white,
