@@ -1,48 +1,116 @@
 import 'package:connect/Screens/ChatBox.dart';
+import 'package:connect/Services/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Chat extends StatefulWidget {
   @override
   _ChatState createState() => _ChatState();
 }
+
 class _ChatState extends State<Chat> {
-  double h,w;
-  @override    
-  Widget build(BuildContext context) {    
-    h = MediaQuery.of(context).size.height;
-    w = MediaQuery.of(context).size.width;
+  Stream chatRooms;
+  String uid;
+  Auth auth = new Auth();
+
+  Widget chatRoomsList() {
+    return StreamBuilder(
+      stream: chatRooms,
+      builder: (context, snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+                itemCount: snapshot.data.documents.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return ChatRoomsTile(
+                    userName: snapshot.data.documents[index]['users'][1],
+                    chatRoomId: snapshot.data.documents[index]["chatRoomId"],
+                  );
+                })
+            : Container();
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    getUserInfogetChats();
+    super.initState();
+  }
+
+  getUserInfogetChats() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String me = prefs.getString('checkName');
+    setState(() {
+      uid = me;
+    });
+    auth.getUserChats(uid).then((snapshots) {
+      setState(() {
+        chatRooms = snapshots;
+        print(
+            "we got the data + ${chatRooms.toString()} this is name  $uid");
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("Chat", 
-          style: GoogleFonts.ptSans(
-            fontSize: 24,
-            color: Colors.black
-          )
-        ),
-        backgroundColor: Colors.white,
+      body: Container(
+        child: chatRoomsList(),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.only(top: 0.02 * h),
-              itemCount: 15,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 0.1 * w),
-                  leading: CircleAvatar(),
-                  title: Text("Person"),
-                  onTap: () => {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatBox()))
-                  },
-                );
-              }
-            ),
+    );
+  }
+}
+
+class ChatRoomsTile extends StatelessWidget {
+  final String userName;
+  final String chatRoomId;
+
+  ChatRoomsTile({this.userName,@required this.chatRoomId});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) => ChatBox(
+            chatRoomId: chatRoomId,
+            user: userName,
           )
-        ],
-      )
+        ));
+      },
+      child: Container(
+        color: Colors.black26,
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        child: Row(
+          children: [
+            Container(
+              height: 30,
+              width: 30,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30)),
+              child: Text(userName.substring(0, 1),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontFamily: 'OverpassRegular',
+                      fontWeight: FontWeight.w300)),
+            ),
+            SizedBox(
+              width: 12,
+            ),
+            Text(userName,
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontFamily: 'OverpassRegular',
+                    fontWeight: FontWeight.w300))
+          ],
+        ),
+      ),
     );
   }
 }

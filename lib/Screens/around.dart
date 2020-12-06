@@ -16,13 +16,14 @@ class Around extends StatefulWidget {
 }
 class _AroundState extends State<Around> {
 
-  String location;
+  String location, me;
 
   void initState() {
     super.initState();
     setState(() {
       location = widget.location;
     });
+    init();
     getAround();
   }
 
@@ -43,6 +44,14 @@ class _AroundState extends State<Around> {
     lst = await auth.getNearbyUsers(location);
     setState(() {
       users = lst;
+    });
+  }
+
+  init() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String u = prefs.getString('uid');
+    setState(() {
+      me = u;
     });
   }
 
@@ -110,7 +119,7 @@ class _AroundState extends State<Around> {
                       padding: EdgeInsets.only(top: 0.05 * h),
                       itemCount: users.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
+                        return users[index].id != me ? ListTile(
                           contentPadding: EdgeInsets.symmetric(horizontal: 0.1 * w),
                           leading: CircleAvatar(),
                           title: Text(users[index].name),
@@ -126,7 +135,8 @@ class _AroundState extends State<Around> {
                                 IconButton(
                                   icon: Icon(Icons.message, color: cred, size: 0.08 * w), 
                                   onPressed: () => {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatBox()))
+                                    sendMessage(users[index].id)
+                                    //Navigator.push(context, MaterialPageRoute(builder: (context) => ChatBox(user: users[index].id,)))
                                   },
                                 ),
                               ],
@@ -135,7 +145,7 @@ class _AroundState extends State<Around> {
                           onTap: () => {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => Person()))
                           },
-                        );
+                        ) : Container();
                       }
                     ),
                   ),
@@ -189,5 +199,30 @@ class _AroundState extends State<Around> {
         ),
       ),
     );
+  }
+  sendMessage(String userName) async {
+    String user = await auth.getName(userName);
+    List<String> users = [await auth.getName(me), user];
+    String chatRoomId = getChatRoomId(me, userName);
+    Map<String, dynamic> chatRoom = {
+      "users": users,
+      "chatRoomId" : chatRoomId,
+      "updatedAt": DateTime.now()
+    };
+    auth.addChatRoom(chatRoom, chatRoomId);
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => ChatBox(
+        chatRoomId: chatRoomId,
+        user: user
+      )
+    ));
+  }
+
+  getChatRoomId(String a, String b) {
+    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
+      return "$b\_$a";
+    } else {
+      return "$a\_$b";
+    }
   }
 }

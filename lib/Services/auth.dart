@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firestore_cache/firestore_cache.dart';
 
 class Auth{
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -16,6 +17,7 @@ class Auth{
   Stream<User> get authStateChanges => auth.authStateChanges();
   String _verificationId;
   GoogleSignIn googleSignIn = GoogleSignIn();
+  User user;
 
   createAccount(String email, String password, String name, String dob, String gender) async {
     try {
@@ -31,6 +33,7 @@ class Auth{
         });
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('uid', cred.user.uid);
+        user = auth.currentUser;
         return cred;
       });
     } on FirebaseAuthException catch (e) {
@@ -51,6 +54,7 @@ class Auth{
         email: email,
         password: password
       );
+      user = auth.currentUser;
     } catch (e) {
       print(e);
     }
@@ -145,6 +149,7 @@ class Auth{
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('location', location);
+    prefs.setString('checkName', checkName);
   }
 
   getNearbyUsers(String location) async {
@@ -153,11 +158,49 @@ class Auth{
     for(int i=0;i<qs.docs.length;i++) {
       String name;
       await _firestore.collection('users').doc(qs.docs.elementAt(i).id).get().then((val) => {
-        name = val.data()['name']
+        name = val.data()['checkName']
       });
       UserDetail user = new UserDetail(qs.docs.elementAt(i).id, name);
       lst.add(user);  
     }
     return lst;
+  }
+
+  addChatRoom(chatRoom, chatRoomId) async {
+    _firestore.collection("chatRoom").doc(chatRoomId).set(chatRoom)
+      .catchError((e) {
+        print(e);
+      }
+    );
+  }
+
+  getChats(String chatRoomId) async {
+    return _firestore.collection("chatRoom").doc(chatRoomId).collection("chats").orderBy('time').snapshots();
+  }
+
+  addMessage(String chatRoomId, chatMessageData) async{
+    _firestore.collection("chatRoom").doc(chatRoomId).collection("chats").add(chatMessageData)
+      .catchError((e){
+        print(e.toString());
+      }
+    );
+    _firestore.collection("chatRoom").doc(chatRoomId).update({
+        "updatedAt": DateTime.now()
+    }).catchError((e){
+        print(e.toString());
+      }
+    );
+  }
+
+  getUserChats(String itIsMyName) async {
+    return _firestore.collection("chatRoom").where('users', arrayContains: itIsMyName).snapshots();
+  }
+
+  Future<String> getName(String uid) async{
+    String name;
+    await _firestore.collection("users").doc(uid).get().then((val) => {
+      name = val.data()['checkName']
+    });
+    return name;
   }
 }
