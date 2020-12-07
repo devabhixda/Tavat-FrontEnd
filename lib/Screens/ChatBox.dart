@@ -5,6 +5,7 @@ import 'package:flutter/material.dart' hide Key;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 
 class ChatBox extends StatefulWidget {
   final String chatRoomId, user;
@@ -67,50 +68,73 @@ class _ChatBoxState extends State<ChatBox> {
         child: Stack(
           children: [
             chatMessages(),
-            Container(
-              alignment: Alignment.bottomCenter,
-              margin: EdgeInsets.only(bottom: 0.01 * h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 0.8 * w,
-                    height: 0.06 * h,
-                    child: new Theme(
-                      data: new ThemeData(
-                        primaryColor: cred,
-                        primaryColorDark: cred,
-                      ),
-                      child: TextField(
-                        controller: messageEditingController,
-                        textAlignVertical: TextAlignVertical.bottom,
-                        cursorColor: cred,
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(color: cred),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(color: cred)
-                          ),
-                          hintText: "Type a message",
-                          suffixIcon: Icon(Icons.camera, color: cred),
-                        ),
+            OfflineBuilder(
+              connectivityBuilder: (
+                BuildContext context,
+                ConnectivityResult connectivity,
+                Widget child,
+              ) {
+                if (connectivity == ConnectivityResult.none) {
+                  return Container(
+                    alignment: Alignment.bottomCenter,
+                    padding: EdgeInsets.only(bottom: 0.03 * h),
+                    child: Text("You are offline",
+                      style: GoogleFonts.ptSans(
+                        fontSize: 16
                       ),
                     )
+                  );
+                } else {
+                  return child;
+                }
+              },
+              builder: (BuildContext context) {
+                return Container(
+                  alignment: Alignment.bottomCenter,
+                  margin: EdgeInsets.only(bottom: 0.01 * h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 0.8 * w,
+                        height: 0.06 * h,
+                        child: new Theme(
+                          data: new ThemeData(
+                            primaryColor: cred,
+                            primaryColorDark: cred,
+                          ),
+                          child: TextField(
+                            controller: messageEditingController,
+                            textAlignVertical: TextAlignVertical.bottom,
+                            cursorColor: cred,
+                            decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(color: cred),
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(color: cred)
+                              ),
+                              hintText: "Type a message",
+                              suffixIcon: Icon(Icons.camera, color: cred),
+                            ),
+                          ),
+                        )
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.send, color: cred, size: 32),
+                        onPressed: () => {
+                          addMessage()
+                        },
+                      )
+                    ],
                   ),
-                  IconButton(
-                    icon: Icon(Icons.send, color: cred, size: 32),
-                    onPressed: () => {
-                      addMessage()
-                    },
-                  )
-                ],
-              ),
+                );
+              },
             ),
           ],
         ),

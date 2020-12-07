@@ -1,8 +1,11 @@
 import 'package:connect/Screens/Onboarding/phone.dart';
 import 'package:connect/Screens/base.dart';
+import 'package:connect/Screens/chat.dart';
+import 'package:connect/consts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 
 void main() async {
   runApp(Main());
@@ -51,10 +54,36 @@ class _TavatState extends State<Tavat> {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.white,
-        body: loading ? Center(
-          child: CircularProgressIndicator()
-        ) : login ? Base() : phone(),
-      ),
+        body: OfflineBuilder(
+          connectivityBuilder: (
+            BuildContext context,
+            ConnectivityResult connectivity,
+            Widget child,
+          ) {
+            if (connectivity == ConnectivityResult.none) {
+              return Scaffold(
+                body: Center(
+                  child: Image.asset('assets/images/offline.jpg')
+                ),
+                floatingActionButton: FloatingActionButton(
+                  child: Icon(Icons.message),
+                  backgroundColor: cred,
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Chat()));
+                  },
+                ),
+              );
+            } else {
+              return child;
+            }
+          },
+          builder: (BuildContext context) {
+            return loading ? Center(
+              child: CircularProgressIndicator()
+            ) : login ? Base() : phone();
+          },
+        ),
+      )
     );
   }
 }
