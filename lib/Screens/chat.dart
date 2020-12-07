@@ -23,7 +23,7 @@ class _ChatState extends State<Chat> {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return ChatRoomsTile(
-                    userName: snapshot.data.documents[index]['users'][1],
+              userName: uid == snapshot.data.documents[index]['users'][1] ? snapshot.data.documents[index]['users'][0] : uid,
                     chatRoomId: snapshot.data.documents[index]["chatRoomId"],
                   );
                 })
