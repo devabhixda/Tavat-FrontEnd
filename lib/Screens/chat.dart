@@ -1,6 +1,9 @@
 import 'package:connect/Screens/ChatBox.dart';
 import 'package:connect/Services/auth.dart';
+import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Chat extends StatefulWidget {
@@ -17,17 +20,25 @@ class _ChatState extends State<Chat> {
     return StreamBuilder(
       stream: chatRooms,
       builder: (context, snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-                itemCount: snapshot.data.documents.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return ChatRoomsTile(
+        return snapshot.hasData ? (snapshot.data.documents.length > 0 ? ListView.builder(
+          itemCount: snapshot.data.documents.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            return ChatRoomsTile(
               userName: uid == snapshot.data.documents[index]['users'][1] ? snapshot.data.documents[index]['users'][0] : uid,
-                    chatRoomId: snapshot.data.documents[index]["chatRoomId"],
-                  );
-                })
-            : Container();
+              chatRoomId: snapshot.data.documents[index]["chatRoomId"],
+            );
+          }) : Center(
+          child: Text("You don't have any chats yet",
+            style: GoogleFonts.ptSans(
+              fontSize: 24
+            ),
+          )
+        )
+      ) : SpinKitDoubleBounce(
+          color: cred,
+          size: 30.0,
+        );
       },
     );
   }
