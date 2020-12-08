@@ -32,11 +32,14 @@ class Auth{
           'email': email,
           'name': name,
           'dob': dob,
-          'gender': gender
+          'gender': gender,
+          'interests': "Your interests here",
+          "about": "Something about you"
         });
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('uid', cred.user.uid);
         user = auth.currentUser;
+        uploadImage(image, cred.user.uid);
         return cred;
       });
     } on FirebaseAuthException catch (e) {
@@ -240,3 +243,11 @@ class Auth{
   getUserProfile(String uid) async {
     return _firestore.collection("users").doc(uid).get();
   }
+
+  updateProfile(String uid, String about, String interests) async {
+    _firestore.collection('users').doc(uid).update({
+      "about": about,
+      "interests": interests
+    });
+  }
+}
