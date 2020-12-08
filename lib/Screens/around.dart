@@ -17,6 +17,7 @@ class Around extends StatefulWidget {
 class _AroundState extends State<Around> {
 
   String location, me;
+  bool loading = true;
 
   void initState() {
     super.initState();
@@ -28,7 +29,7 @@ class _AroundState extends State<Around> {
   }
 
   Auth auth = new Auth();
-  List<UserDetail> users;
+  List<UserDetail> users = [];
 
   getAround() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -42,8 +43,12 @@ class _AroundState extends State<Around> {
     }
     List<UserDetail> lst;
     lst = await auth.getNearbyUsers(location);
+    for(UserDetail u in lst) {
+      if(u.id != me)
+        users.add(u);
+    }
     setState(() {
-      users = lst;
+      loading = false;
     });
   }
 
@@ -106,7 +111,7 @@ class _AroundState extends State<Around> {
                     fontSize: 24
                   ),
                 )
-              ) : users != null ? users.length == 1 ? Center(
+              ) : !loading ? users.length == 0 ? Center(
                 child: Text("There is no one around",
                   style: GoogleFonts.ptSans(
                     fontSize: 24
@@ -119,7 +124,7 @@ class _AroundState extends State<Around> {
                       padding: EdgeInsets.only(top: 0.05 * h),
                       itemCount: users.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return users[index].id != me ? ListTile(
+                        return ListTile(
                           contentPadding: EdgeInsets.symmetric(horizontal: 0.1 * w),
                           leading: CircleAvatar(),
                           title: Text(users[index].name),
@@ -145,7 +150,7 @@ class _AroundState extends State<Around> {
                           onTap: () => {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => Person()))
                           },
-                        ) : Container();
+                        );
                       }
                     ),
                   ),
