@@ -1,11 +1,11 @@
+import 'dart:io';
 import 'package:connect/Screens/base.dart';
 import 'package:connect/Services/auth.dart';
-import 'package:connect/Services/firestore_func.dart';
 import 'package:connect/consts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
 
 class signup extends StatefulWidget {
   @override
@@ -18,6 +18,8 @@ class _signupState extends State<signup> {
   int _radiobtnvalue = -1;
   Auth auth = new Auth();
   DateTime pickedDate;
+  File _imageFile;
+  final picker = ImagePicker();
 
   @override
   void initState() {
@@ -31,6 +33,7 @@ class _signupState extends State<signup> {
     setState(() {
       email = e;
     });
+    print(email);
   }
 
   @override    
@@ -54,6 +57,24 @@ class _signupState extends State<signup> {
                 fontSize: 48,
                 fontWeight: FontWeight.w600
               )),
+              Center(
+                child: Card(
+                  color: Colors.white,
+                  elevation: 5,
+                  shadowColor: cred,
+                  shape: CircleBorder(),
+                  child: GestureDetector(
+                    onTap: () => {
+                      pickImage()
+                    },
+                    child: CircleAvatar(
+                      radius: 0.1 * h,
+                      backgroundColor: Colors.white,
+                      backgroundImage: _imageFile != null ? FileImage(_imageFile) : AssetImage('assets/images/add.png'),
+                    ),
+                  ),
+                )
+              ),
               Card(
                 margin: EdgeInsets.only(top: 0.02 * h, bottom: 0.01 * h),
                 shape: RoundedRectangleBorder(
@@ -227,7 +248,7 @@ class _signupState extends State<signup> {
                         },
                       )
                     } else {
-                      auth.createAccount(email, password, name, pickedDate.toIso8601String(), gender).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) => Base()))),
+                      auth.createAccount(_imageFile, email, password, name, pickedDate.toIso8601String(), gender).then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Base()))),
                     }
                   },
                 ),
@@ -290,6 +311,13 @@ class _signupState extends State<signup> {
   void terms(bool value) {
     setState(() {
       tnc = value;
+    });
+  }
+
+  pickImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    setState(() {
+      _imageFile = File(pickedFile.path);
     });
   }
 }

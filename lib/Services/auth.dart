@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:connect/Models/user.dart';
 import 'package:connect/Screens/Onboarding/signup.dart';
 import 'package:connect/Screens/base.dart';
 import 'package:connect/Services/firestore_func.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -19,7 +22,7 @@ class Auth{
   GoogleSignIn googleSignIn = GoogleSignIn();
   User user;
 
-  createAccount(String email, String password, String name, String dob, String gender) async {
+  createAccount(File image, String email, String password, String name, String dob, String gender) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
@@ -45,6 +48,22 @@ class Auth{
     } catch (e) {
       print(e);
     }
+  }
+
+  uploadImage(File image, String uid) async {
+    String imgUrl;
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('profile_images')
+        .child(image.path);
+    if (image != null) {
+      await ref.putFile(image).whenComplete(() => null);
+      imgUrl = await ref.getDownloadURL();
+    }
+    _firestore.collection('users').doc(uid).update({
+      'pfp': FieldValue.arrayUnion([imgUrl])
+    });
+    return imgUrl;
   }
 
   Future<bool> signIn(String email, String password) async {
