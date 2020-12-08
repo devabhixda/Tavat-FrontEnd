@@ -142,11 +142,16 @@ class Auth{
     Navigator.push(context, MaterialPageRoute(builder: (context) => exists ? Base() : signup()));
   }
 
-  checkIn(String uid, String location, String checkName) async {
-    await _firestore.collection('users').doc(uid).update({
-      'location': location,
-      'checkName': checkName
-    });
+  checkIn(String uid, String location, String checkName, bool virtual) async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('checkIn');
+    callable.call(
+      <String, dynamic>{
+        'uid': uid,
+        'location': location,
+        'checkName': checkName,
+        'virtual': virtual
+      },
+    );
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('location', location);
     prefs.setString('checkName', checkName);

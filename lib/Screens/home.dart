@@ -183,7 +183,7 @@ class _HomeState extends State<Home> {
                                 RaisedButton(
                                   onPressed: () => {
                                     if(checkName != null) {
-                                      auth.checkIn(uid, places[selectedPlace].name, checkName),
+                                      auth.checkIn(uid, places[selectedPlace].name, checkName, false),
                                       Navigator.pop(context),
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => Around(location: places[selectedPlace].name)))
                                     } else {
