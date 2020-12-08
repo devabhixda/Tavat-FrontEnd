@@ -162,12 +162,7 @@ class _ChatBoxState extends State<ChatBox> {
   addMessage() {
     if (messageEditingController.text.isNotEmpty) {
       final message = encrypter.encrypt(messageEditingController.text, iv: IV.fromLength(16));
-      Map<String, dynamic> chatMessageMap = {
-        "sendBy": uid,
-        "message": message.base64,
-        'time': DateTime.now().millisecondsSinceEpoch,
-      };
-      auth.addMessage(widget.chatRoomId, chatMessageMap);
+      auth.addMessage(widget.chatRoomId, uid, message.base64);
       setState(() {
         messageEditingController.text = "";
       });

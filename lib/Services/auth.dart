@@ -178,17 +178,22 @@ class Auth{
     return _firestore.collection("chatRoom").doc(chatRoomId).collection("chats").orderBy('time').snapshots();
   }
 
-  addMessage(String chatRoomId, chatMessageData) async{
-    _firestore.collection("chatRoom").doc(chatRoomId).collection("chats").add(chatMessageData)
-      .catchError((e){
-        print(e.toString());
-      }
+  addMessage(String chatRoomId, String sendBy, String message) async{
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('addMessage');
+    callable.call(
+      <String, dynamic>{
+        "sendBy": sendBy,
+        "message": message,
+        "time": DateTime.now().millisecondsSinceEpoch.toString(),
+        "chatRoomId": chatRoomId
+      },
     );
-    _firestore.collection("chatRoom").doc(chatRoomId).update({
-        "updatedAt": DateTime.now()
-    }).catchError((e){
-        print(e.toString());
-      }
+    HttpsCallable callable1 = FirebaseFunctions.instance.httpsCallable('updated');
+    callable1.call(
+      <String, dynamic>{
+        "updatedAt": DateTime.now().toString(),
+        "chatRoomId": chatRoomId
+      },
     );
   }
 
