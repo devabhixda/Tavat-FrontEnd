@@ -236,4 +236,7 @@ class Auth{
     });
     return name;
   }
-}
+
+  getUserProfile(String uid) async {
+    return _firestore.collection("users").doc(uid).get();
+  }
