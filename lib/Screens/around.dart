@@ -29,7 +29,7 @@ class _AroundState extends State<Around> {
   }
 
   Auth auth = new Auth();
-  List<UserDetail> users = [];
+  List<UserDetail> users = [], usersvir = [];
 
   getAround() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -44,8 +44,13 @@ class _AroundState extends State<Around> {
     List<UserDetail> lst;
     lst = await auth.getNearbyUsers(location);
     for(UserDetail u in lst) {
-      if(u.id != me)
-        users.add(u);
+      if(u.id != me) {
+        if(u.virtual) {
+          usersvir.add(u);
+        } else {
+          users.add(u);
+        }
+      }
     }
     setState(() {
       loading = false;
@@ -159,17 +164,29 @@ class _AroundState extends State<Around> {
                 color: cred,
                 size: 30.0,
               ),
-              Column(
+              location == "not set" ? Center(
+                child: Text("Please check in First",
+                  style: GoogleFonts.ptSans(
+                    fontSize: 24
+                  ),
+                )
+              ) : !loading ? usersvir.length == 0 ? Center(
+                child: Text("There is no one around",
+                  style: GoogleFonts.ptSans(
+                    fontSize: 24
+                  ),
+                )
+              ) : Column(
                 children: [
                   Expanded(
                     child: ListView.builder(
                       padding: EdgeInsets.only(top: 0.05 * h),
-                      itemCount: 15,
+                      itemCount: usersvir.length,
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
                           contentPadding: EdgeInsets.symmetric(horizontal: 0.1 * w),
                           leading: CircleAvatar(),
-                          title: Text("Person"),
+                          title: Text(usersvir[index].name),
                           trailing: Container(
                             width: 0.3 * w,
                             child: Row(
@@ -177,14 +194,13 @@ class _AroundState extends State<Around> {
                               children: [
                                 IconButton(
                                   icon: Icon(Icons.wine_bar, color: cred, size: 0.08 * w), 
-                                  onPressed: () => {
-                                    
-                                  }
+                                  onPressed: null
                                 ),
                                 IconButton(
                                   icon: Icon(Icons.message, color: cred, size: 0.08 * w), 
                                   onPressed: () => {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatBox()))
+                                    sendMessage(usersvir[index].id)
+                                    //Navigator.push(context, MaterialPageRoute(builder: (context) => ChatBox(user: users[index].id,)))
                                   },
                                 ),
                               ],
@@ -198,6 +214,9 @@ class _AroundState extends State<Around> {
                     ),
                   ),
                 ],
+              ) : SpinKitDoubleBounce(
+                color: cred,
+                size: 30.0,
               ),
             ],
           ),

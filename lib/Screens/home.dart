@@ -1,5 +1,6 @@
 import 'package:connect/Screens/Around.dart';
 import 'package:connect/Services/auth.dart';
+import 'package:connect/Services/autocomplete.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -28,7 +29,9 @@ class _HomeState extends State<Home> {
   bool panelOpen = false;
   String uid;
   Auth auth = new Auth();
-  String checkName;
+  String checkName, query = "";
+  final TextEditingController _typeAheadController = TextEditingController();
+  bool loading = true, virtual = false;
 
   initState() {
     super.initState();
@@ -45,16 +48,11 @@ class _HomeState extends State<Home> {
     setState(() {
       uid = user;
     });
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-    .then((Position position) async {
-        setState(() {
-          currentLocation = position;
-        });
-      }).catchError((e) {
-        print(e);
-      }
-    );
-    List<PlaceDetail> temp = await getNearbyPlaces(currentLocation.latitude, currentLocation.longitude, 1000);
+    await locateme();
+  }
+
+  nearby(double lat, double lng) async {
+    List<PlaceDetail> temp = await getNearbyPlaces(lat, lng, 1000);
     setState(() {
       places = temp;
     });
@@ -74,6 +72,46 @@ class _HomeState extends State<Home> {
         markers[markerId] = marker;
       });
     }
+    setState(() {
+      loading = false;
+    });
+  }
+
+  locateme() async {
+    setState(() {
+      query = "";
+      virtual = false;
+    });
+    Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    setState(() {
+      currentLocation = pos;
+    });
+    if(mapController != null)
+      await moveCamera(pos.latitude, pos.longitude);
+    await nearby(currentLocation.latitude, currentLocation.longitude);
+  }
+
+  changePlace(String placeId) async {
+    _typeAheadController.clear();
+    setState(() {
+      query = "";
+      virtual = true;
+    });
+    Place place = await getPlaceDetailFromId(placeId);
+    await moveCamera(place.lat, place.lng);
+    await nearby(place.lat, place.lng);
+  }
+
+  moveCamera(double lat, double lng) async {
+    setState(() {
+      loading = true;
+    });
+    CameraPosition _kLake = CameraPosition(
+      target: LatLng(lat, lng),
+      zoom: 15
+    );
+    mapController.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+    places = null;
   }
 
   @override
@@ -83,16 +121,88 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: SlidingUpPanel(
         controller: _pc,
-        body: currentLocation !=null ? GoogleMap(
-          mapType: MapType.normal,
-          initialCameraPosition: CameraPosition(
-          target: LatLng(
-            currentLocation.latitude,
-            currentLocation.longitude),
-            zoom: 15
-          ),
-          onMapCreated: _onMapCreated,
-          markers: Set<Marker>.of(markers.values)
+        body: currentLocation !=null ? Stack(
+          children: [
+            GoogleMap(
+              mapType: MapType.normal,
+              initialCameraPosition: CameraPosition(
+              target: LatLng(
+                currentLocation.latitude,
+                currentLocation.longitude),
+                zoom: 15
+              ),
+              onMapCreated: _onMapCreated,
+              markers: Set<Marker>.of(markers.values)
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 0.05 * w, vertical: 0.05 * h),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)
+                ),
+                elevation: 2,
+                child: Container(
+                  padding: EdgeInsets.only(left: 25),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Search for a location",
+                            hintStyle: GoogleFonts.ptSans(color: Colors.grey, fontSize: 22)
+                          ),
+                          controller: this._typeAheadController,
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              query = value;
+                            });
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.gps_fixed), 
+                        onPressed: () => {
+                          locateme()
+                        }
+                      )
+                    ],
+                  )
+                ),
+              ),
+            ),
+            query.length > 0 ? Container(
+              height: 0.3 * h,
+              margin: EdgeInsets.symmetric(horizontal: 0.05 * w, vertical: 0.15 * h),
+              child: Card(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)
+                ),
+                child: FutureBuilder(
+                  future: fetchSuggestions(query),
+                  builder: (context, snapshot) => snapshot.hasData ? ListView.builder(
+                      itemBuilder: (context, index) => ListTile(
+                        title:
+                            Text((snapshot.data[index] as Suggestion).description),
+                        onTap: () {
+                          FocusScope.of(context).unfocus();
+                          changePlace(snapshot.data[index].placeId);
+                        },
+                      ),
+                      itemCount: snapshot.data.length,
+                    )
+                  : SpinKitDoubleBounce(
+                    color: cred,
+                    size: 30.0,
+                  ),
+                )
+              )
+            )  : Container(),
+          ],
         ) : SpinKitDoubleBounce(
           color: cred,
           size: 30.0,
@@ -183,9 +293,9 @@ class _HomeState extends State<Home> {
                                 RaisedButton(
                                   onPressed: () => {
                                     if(checkName != null) {
-                                      auth.checkIn(uid, places[selectedPlace].name, checkName, false),
+                                      auth.checkIn(uid, places[selectedPlace].name, checkName, virtual),
                                       Navigator.pop(context),
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Around(location: places[selectedPlace].name)))
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Around(location: places[selectedPlace].name)))
                                     } else {
                                       Toast.show("Name cannot be empty", context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM)
                                     }
@@ -285,7 +395,7 @@ class _HomeState extends State<Home> {
                 )
               )
             ),
-            places != null ? Container(
+            !loading ? Container(
               padding: EdgeInsets.symmetric(horizontal: 0.05 * w),
               height: 0.15 * h,
               child: ListView.builder(

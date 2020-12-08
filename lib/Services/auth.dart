@@ -162,10 +162,12 @@ class Auth{
     QuerySnapshot qs =  await _firestore.collection('users').where('location', isEqualTo: location).get();
     for(int i=0;i<qs.docs.length;i++) {
       String name;
+      bool virtual;
       await _firestore.collection('users').doc(qs.docs.elementAt(i).id).get().then((val) => {
-        name = val.data()['checkName']
+        name = val.data()['checkName'],
+        virtual = val.data()['virtual']
       });
-      UserDetail user = new UserDetail(qs.docs.elementAt(i).id, name);
+      UserDetail user = new UserDetail(qs.docs.elementAt(i).id, name, virtual);
       lst.add(user);  
     }
     return lst;
