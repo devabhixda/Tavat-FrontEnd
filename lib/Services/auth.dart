@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firestore_cache/firestore_cache.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 class Auth{
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -167,10 +167,12 @@ class Auth{
   }
 
   addChatRoom(chatRoom, chatRoomId) async {
-    _firestore.collection("chatRoom").doc(chatRoomId).set(chatRoom)
-      .catchError((e) {
-        print(e);
-      }
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('addChatRoom');
+    callable.call(
+      <String, dynamic>{
+        "chatRoom": chatRoom,
+        "chatRoomId": chatRoomId
+      },
     );
   }
 

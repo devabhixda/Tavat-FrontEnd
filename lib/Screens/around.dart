@@ -207,7 +207,7 @@ class _AroundState extends State<Around> {
     Map<String, dynamic> chatRoom = {
       "users": users,
       "chatRoomId" : chatRoomId,
-      "updatedAt": DateTime.now()
+      "updatedAt": DateTime.now().toString()
     };
     auth.addChatRoom(chatRoom, chatRoomId);
     Navigator.push(context, MaterialPageRoute(
