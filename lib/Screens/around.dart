@@ -10,7 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Around extends StatefulWidget {
   final location;
-  Around({this.location});
+  final List<UserDetail> lst;
+  Around({this.location, this.lst});
   @override
   _AroundState createState() => _AroundState();
 }
@@ -41,16 +42,12 @@ class _AroundState extends State<Around> {
         });
       }
     }
-    List<UserDetail> lst;
-    lst = await auth.getNearbyUsers(location);
-    for(UserDetail u in lst) {
-      if(u.id != me) {
-        if(u.virtual) {
-          usersvir.add(u);
-        } else {
-          users.add(u);
-        }
-      }
+    if(widget.lst == null) {
+      List<UserDetail> lst;
+      lst = await auth.getNearbyUsers(location);
+      setAround(lst);
+    } else {
+      setAround(widget.lst);
     }
     setState(() {
       loading = false;
@@ -63,6 +60,18 @@ class _AroundState extends State<Around> {
     setState(() {
       me = u;
     });
+  }
+
+  setAround(List<UserDetail> ulist) async {
+    for(UserDetail u in ulist) {
+      if(u.id != me) {
+        if(u.virtual) {
+          usersvir.add(u);
+        } else {
+          users.add(u);
+        }
+      }
+    }
   }
 
   double h,w;
