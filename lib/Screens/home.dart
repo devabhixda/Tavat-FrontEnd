@@ -334,7 +334,7 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.location_on, color: Colors.red, size: 32),
-                Text('28 Users checked in in last 2 hours', style: TextStyle(color: Colors.red, fontSize: 16))
+                Text('${lst.length} Users checked in', style: TextStyle(color: Colors.red, fontSize: 16))
               ],
             ),
             SizedBox(
