@@ -1,3 +1,4 @@
+import 'package:connect/Models/user.dart';
 import 'package:connect/Screens/Around.dart';
 import 'package:connect/Services/auth.dart';
 import 'package:connect/Services/autocomplete.dart';
@@ -32,6 +33,7 @@ class _HomeState extends State<Home> {
   String checkName, query = "";
   final TextEditingController _typeAheadController = TextEditingController();
   bool loading = true, virtual = false;
+  List<UserDetail> lst;
 
   initState() {
     super.initState();
@@ -407,8 +409,10 @@ class _HomeState extends State<Home> {
                       setState(() {
                         selectedPlace = index;
                         panelOpen = true;
+                        lst = null;
                       }),
-                      _pc.open()
+                      _pc.open(),
+                      fetchNearby(places[selectedPlace].name)
                     },
                     child: Stack(
                       alignment: Alignment.center,
@@ -451,6 +455,20 @@ class _HomeState extends State<Home> {
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
       mapController = controller;
+    });
+  }
+
+  fetchNearby(String location) async {
+    List<UserDetail> tmp = await auth.getNearbyUsers(location);
+    for(UserDetail u in tmp) {
+      if(u.gender == "male") {
+        m++;
+      } else {
+        f++;
+      }
+    }
+    setState(() {
+      lst = tmp;
     });
   }
 }
