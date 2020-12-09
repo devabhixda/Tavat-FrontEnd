@@ -189,11 +189,13 @@ class Auth{
     for(int i=0;i<qs.docs.length;i++) {
       String name;
       bool virtual;
+      String gender;
       await _firestore.collection('users').doc(qs.docs.elementAt(i).id).get().then((val) => {
         name = val.data()['checkName'],
-        virtual = val.data()['virtual']
+        virtual = val.data()['virtual'],
+        gender = val.data()['gender']
       });
-      UserDetail user = new UserDetail(qs.docs.elementAt(i).id, name, virtual);
+      UserDetail user = new UserDetail(qs.docs.elementAt(i).id, name, virtual, gender);
       lst.add(user);  
     }
     return lst;
