@@ -34,6 +34,7 @@ class _HomeState extends State<Home> {
   final TextEditingController _typeAheadController = TextEditingController();
   bool loading = true, virtual = false;
   List<UserDetail> lst;
+  int m=0, f=0;
 
   initState() {
     super.initState();
@@ -209,7 +210,7 @@ class _HomeState extends State<Home> {
           color: cred,
           size: 30.0,
         ),
-        panel: panelOpen ? Column(
+        panel: panelOpen ? lst != null ? Column(
           children: [
             AppBar(
               title: Text("Check-In",
@@ -370,18 +371,21 @@ class _HomeState extends State<Home> {
                   fontWeight: FontWeight.bold,
                   fontSize: 0.05 * w
                 )),
-                Text("40%", style: GoogleFonts.ptSans(
+                Text(f!=0 ? (m/f * 100).toString() + "%" : "Na", style: GoogleFonts.ptSans(
                   fontWeight: FontWeight.bold,
                   color: cred,
                   fontSize: 0.05 * w
                 )),
               ],
             ),
-            SizedBox(
-              height: 0.02 * h,
-            ),
-            Text(places[selectedPlace].vincinity)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 0.02 * h, horizontal: 0.15 * w),
+              child: Text(places[selectedPlace].vincinity),
+            )
           ],
+        ) : SpinKitDoubleBounce(
+          color: cred,
+          size: 30.0,
         ) : Center(
           child: Text("Please select a nearby place first"),
         ),
@@ -410,6 +414,8 @@ class _HomeState extends State<Home> {
                         selectedPlace = index;
                         panelOpen = true;
                         lst = null;
+                        m = 0;
+                        f = 0;
                       }),
                       _pc.open(),
                       fetchNearby(places[selectedPlace].name)
