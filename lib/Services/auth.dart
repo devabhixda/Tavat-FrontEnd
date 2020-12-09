@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
@@ -164,14 +165,17 @@ class Auth{
     Navigator.push(context, MaterialPageRoute(builder: (context) => exists ? Base() : signup()));
   }
 
-  checkIn(String uid, String location, String checkName, bool virtual) async {
+  checkIn(String uid, String location, String checkName, bool virtual, String vincinity) async {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('checkIn');
     callable.call(
       <String, dynamic>{
         'uid': uid,
         'location': location,
         'checkName': checkName,
-        'virtual': virtual
+        'virtual': virtual,
+        'vincinity': vincinity,
+        "time": DateTime.now().millisecondsSinceEpoch.toString(),
+        "date": DateFormat('dd-MM-yyyy').format(DateTime.now())
       },
     );
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -249,5 +253,9 @@ class Auth{
       "about": about,
       "interests": interests
     });
+  }
+
+  getHistory(String uid) async {
+    return _firestore.collection("users").doc(uid).collection("checkin").orderBy('time').snapshots();
   }
 }
