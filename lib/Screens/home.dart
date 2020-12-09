@@ -295,7 +295,7 @@ class _HomeState extends State<Home> {
                                     if(checkName != null) {
                                       auth.checkIn(uid, places[selectedPlace].name, checkName, virtual, places[selectedPlace].vincinity),
                                       Navigator.pop(context),
-                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Around(location: places[selectedPlace].name)))
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Around(location: places[selectedPlace].name)))
                                     } else {
                                       Toast.show("Name cannot be empty", context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM)
                                     }
