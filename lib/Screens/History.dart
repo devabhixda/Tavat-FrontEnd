@@ -1,6 +1,7 @@
 import 'package:connect/Services/auth.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -102,7 +103,10 @@ class _HistoryState extends State<History> {
                       )
                     );
                   }
-                ) : Container();
+                ) : SpinKitDoubleBounce(
+                  color: cred,
+                  size: 30.0,
+                );
               },
             )
           )
