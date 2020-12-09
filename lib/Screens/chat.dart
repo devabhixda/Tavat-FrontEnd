@@ -16,6 +16,45 @@ class _ChatState extends State<Chat> {
   String uid;
   Auth auth = new Auth();
 
+  @override
+  void initState() {
+    getUserInfogetChats();
+    super.initState();
+  }
+
+  getUserInfogetChats() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String me = prefs.getString('checkName');
+    setState(() {
+      uid = me;
+    });
+    auth.getUserChats(uid).then((snapshots) {
+      setState(() {
+        chatRooms = snapshots;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Chat", 
+          style: GoogleFonts.ptSans(
+            fontSize: 24,
+            color: Colors.black
+          )
+        ),
+        backgroundColor: Colors.white,
+      ),
+      body: Container(
+        margin: EdgeInsets.only(top: 10),
+        child: chatRoomsList(),
+      ),
+    );
+  }
+
   Widget chatRoomsList() {
     return StreamBuilder(
       stream: chatRooms,
@@ -40,47 +79,6 @@ class _ChatState extends State<Chat> {
           size: 30.0,
         );
       },
-    );
-  }
-
-  @override
-  void initState() {
-    getUserInfogetChats();
-    super.initState();
-  }
-
-  getUserInfogetChats() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String me = prefs.getString('checkName');
-    setState(() {
-      uid = me;
-    });
-    auth.getUserChats(uid).then((snapshots) {
-      setState(() {
-        chatRooms = snapshots;
-        print(
-            "we got the data + ${chatRooms.toString()} this is name  $uid");
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("Chat", 
-          style: GoogleFonts.ptSans(
-            fontSize: 24,
-            color: Colors.black
-          )
-        ),
-        backgroundColor: Colors.white,
-      ),
-      body: Container(
-        margin: EdgeInsets.only(top: 10),
-        child: chatRoomsList(),
-      ),
     );
   }
 }
