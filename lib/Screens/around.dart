@@ -237,12 +237,7 @@ class _AroundState extends State<Around> {
     String user = await auth.getName(userName);
     List<String> users = [await auth.getName(me), user];
     String chatRoomId = getChatRoomId(me, userName);
-    Map<String, dynamic> chatRoom = {
-      "users": users,
-      "chatRoomId" : chatRoomId,
-      "updatedAt": DateTime.now().toString()
-    };
-    auth.addChatRoom(chatRoom, chatRoomId);
+    auth.addChatRoom(users, chatRoomId);
     Navigator.push(context, MaterialPageRoute(
       builder: (context) => ChatBox(
         chatRoomId: chatRoomId,

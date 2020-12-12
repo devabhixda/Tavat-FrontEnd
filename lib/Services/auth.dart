@@ -201,11 +201,11 @@ class Auth{
     return lst;
   }
 
-  addChatRoom(chatRoom, chatRoomId) async {
+  addChatRoom(users, chatRoomId) async {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('addChatRoom');
     callable.call(
       <String, dynamic>{
-        "chatRoom": chatRoom,
+        "users": users,
         "chatRoomId": chatRoomId
       },
     );
