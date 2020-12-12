@@ -216,7 +216,7 @@ class Auth{
     return _firestore.collection("chatRoom").doc(chatRoomId).collection("chats").orderBy('time').snapshots();
   }
 
-  addMessage(String chatRoomId, String sendBy, String message) async{
+  addMessage(String chatRoomId, String sendBy, String message) async {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('addMessage');
     callable.call(
       <String, dynamic>{
@@ -265,5 +265,9 @@ class Auth{
   signOut(BuildContext context) async {
     await auth.signOut();
     Navigator.push(context, MaterialPageRoute(builder: (context) => phone()));
+  }
+
+  getQuestions() async {
+    return _firestore.collection("questions").snapshots();
   }
 }

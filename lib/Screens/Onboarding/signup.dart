@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:connect/Screens/Onboarding/questions.dart';
 import 'package:connect/Screens/base.dart';
 import 'package:connect/Services/auth.dart';
 import 'package:connect/consts.dart';
@@ -248,7 +249,7 @@ class _signupState extends State<signup> {
                         },
                       )
                     } else {
-                      auth.createAccount(_imageFile, email, password, name, pickedDate.toIso8601String(), gender).then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Base()))),
+                      auth.createAccount(_imageFile, email, password, name, pickedDate.toIso8601String(), gender).then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Questions()))),
                     }
                   },
                 ),
