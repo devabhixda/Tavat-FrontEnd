@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:connect/Models/user.dart';
+import 'package:connect/Screens/Onboarding/phone.dart';
 import 'package:connect/Screens/Onboarding/signup.dart';
 import 'package:connect/Screens/base.dart';
 import 'package:connect/Services/firestore_func.dart';
@@ -259,5 +260,10 @@ class Auth{
 
   getHistory(String uid) async {
     return _firestore.collection("users").doc(uid).collection("checkin").orderBy('time').snapshots();
+  }
+
+  signOut(BuildContext context) async {
+    await auth.signOut();
+    Navigator.push(context, MaterialPageRoute(builder: (context) => phone()));
   }
 }

@@ -63,6 +63,14 @@ class _ProfileState extends State<Profile> {
             Navigator.pop(context)
           },
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.exit_to_app, color: cred),
+            onPressed: () => {
+              auth.signOut(context)
+            }
+          )
+        ],
         backgroundColor: Colors.white,
       ),
       body: snapshot != null ? SingleChildScrollView(
