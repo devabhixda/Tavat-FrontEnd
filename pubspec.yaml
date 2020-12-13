@@ -49,6 +49,7 @@ dependencies:
   firebase_storage: ^5.2.0
   path_provider: ^1.6.24
   intl: ^0.16.1
+  carousel_slider: ^2.3.1
 
 dev_dependencies:
   flutter_test:

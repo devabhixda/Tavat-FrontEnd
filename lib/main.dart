@@ -1,6 +1,7 @@
 import 'package:connect/Screens/Onboarding/phone.dart';
 import 'package:connect/Screens/base.dart';
 import 'package:connect/Screens/chat.dart';
+import 'package:connect/Screens/slideshow.dart';
 import 'package:connect/consts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -80,7 +81,7 @@ class _TavatState extends State<Tavat> {
           builder: (BuildContext context) {
             return loading ? Center(
               child: CircularProgressIndicator()
-            ) : login ? Base() : phone();
+            ) : login ? SlideShow() : phone();
           },
         ),
       )
