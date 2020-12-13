@@ -124,6 +124,11 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: SlidingUpPanel(
         controller: _pc,
+        onPanelClosed: () => {
+          setState(() {
+            panelOpen = false;
+          })
+        },
         body: currentLocation !=null ? Stack(
           children: [
             GoogleMap(
