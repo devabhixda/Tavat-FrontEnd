@@ -1,5 +1,6 @@
 import 'package:connect/Models/user.dart';
 import 'package:connect/Screens/ChatBox.dart';
+import 'package:connect/Screens/base.dart';
 import 'package:connect/Services/auth.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
@@ -229,6 +230,15 @@ class _AroundState extends State<Around> {
               ),
             ],
           ),
+          floatingActionButton: location != "not set" ? FloatingActionButton(
+            backgroundColor: cred,
+            child: Icon(Icons.exit_to_app_outlined),
+            tooltip: "Check Out",
+            onPressed: () {
+              auth.checkOut(me);
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Base()));
+            },
+          ) : Container()
         ),
       ),
     );

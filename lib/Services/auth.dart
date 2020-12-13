@@ -292,4 +292,16 @@ class Auth{
       },
     );
   }
+
+  checkOut(String uid) async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('checkOut');
+    callable.call(
+      <String, dynamic>{
+        'uid': uid
+      },
+    );
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('location', "not set");
+    prefs.setString('checkName', "");
+  }
 }
