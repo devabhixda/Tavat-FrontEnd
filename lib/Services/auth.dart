@@ -30,14 +30,16 @@ class Auth{
         email: email,
         password: password
       ).then((cred) async {
-        _firestore.collection('users').doc(cred.user.uid).set({
-          'email': email,
-          'name': name,
-          'dob': dob,
-          'gender': gender,
-          'interests': "Your interests here",
-          "about": "Something about you"
-        });
+        HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('createAccount');
+        callable.call(
+          <String, dynamic>{
+            'uid' : cred.user.uid,
+            'email': email,
+            'name': name,
+            'dob': dob,
+            'gender': gender
+          },
+        );
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('uid', cred.user.uid);
         user = auth.currentUser;
