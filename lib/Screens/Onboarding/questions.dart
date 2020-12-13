@@ -7,6 +7,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Questions extends StatefulWidget {
+  final String uid;
+  Questions({this.uid});
   @override
   _QuestionsState createState() => _QuestionsState();
 }

@@ -249,7 +249,7 @@ class _signupState extends State<signup> {
                         },
                       )
                     } else {
-                      auth.createAccount(_imageFile, email, password, name, pickedDate.toIso8601String(), gender).then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Questions()))),
+                      auth.createAccount(context, _imageFile, email, password, name, pickedDate.toIso8601String(), gender)
                     }
                   },
                 ),

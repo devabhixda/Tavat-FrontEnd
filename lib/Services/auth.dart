@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:connect/Models/user.dart';
 import 'package:connect/Screens/Onboarding/phone.dart';
+import 'package:connect/Screens/Onboarding/questions.dart';
 import 'package:connect/Screens/Onboarding/signup.dart';
 import 'package:connect/Screens/base.dart';
 import 'package:connect/Services/firestore_func.dart';
@@ -24,7 +25,7 @@ class Auth{
   GoogleSignIn googleSignIn = GoogleSignIn();
   User user;
 
-  createAccount(File image, String email, String password, String name, String dob, String gender) async {
+  createAccount(BuildContext context, File image, String email, String password, String name, String dob, String gender) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
@@ -44,6 +45,7 @@ class Auth{
         prefs.setString('uid', cred.user.uid);
         user = auth.currentUser;
         uploadImage(image, cred.user.uid);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Questions(uid: cred.user.uid)));
         return cred;
       });
     } on FirebaseAuthException catch (e) {
