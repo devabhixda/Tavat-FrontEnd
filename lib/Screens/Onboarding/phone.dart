@@ -3,6 +3,7 @@ import 'package:connect/Screens/Onboarding/login.dart';
 import 'package:connect/Screens/Onboarding/otp.dart';
 import 'package:connect/Screens/Onboarding/signup.dart';
 import 'package:connect/Screens/base.dart';
+import 'package:connect/Screens/slideshow.dart';
 import 'package:connect/Services/auth.dart';
 import 'package:connect/Services/firestore_func.dart';
 import 'package:connect/consts.dart';
@@ -106,7 +107,7 @@ class _phoneState extends State<phone> {
                     child: Image(image: AssetImage('assets/images/google.png'), height: 0.08 * h)
                   ),
                   onTap: () => {
-                    auth.signInWithGoogle().then((value) => value ? Navigator.push(context, MaterialPageRoute(builder: (context) => Base())) : Navigator.push(context, MaterialPageRoute(builder: (context) => signup())))
+                    auth.signInWithGoogle().then((value) => value ? Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SlideShow())) : Navigator.push(context, MaterialPageRoute(builder: (context) => signup())))
                   },
                 ),
                 SizedBox(width: 0.1 * w),

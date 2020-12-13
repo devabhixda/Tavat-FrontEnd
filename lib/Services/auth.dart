@@ -5,6 +5,7 @@ import 'package:connect/Screens/Onboarding/phone.dart';
 import 'package:connect/Screens/Onboarding/questions.dart';
 import 'package:connect/Screens/Onboarding/signup.dart';
 import 'package:connect/Screens/base.dart';
+import 'package:connect/Screens/slideshow.dart';
 import 'package:connect/Services/firestore_func.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -169,7 +170,7 @@ class Auth{
   onVerify(String phone, BuildContext context) async {
     bool exists;
     await getUser(phone).then((value) => exists = value);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => exists ? Base() : signup()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => exists ? SlideShow() : signup()));
   }
 
   checkIn(String uid, String location, String checkName, bool virtual, String vincinity) async {

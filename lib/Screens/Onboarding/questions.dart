@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connect/Screens/base.dart';
+import 'package:connect/Screens/slideshow.dart';
 import 'package:connect/Services/auth.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +108,7 @@ class _QuestionsState extends State<Questions> {
                         ans = "";
                       });
                     } else {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Base()));
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SlideShow()));
                     }
                   },
                   child: Text("Next",

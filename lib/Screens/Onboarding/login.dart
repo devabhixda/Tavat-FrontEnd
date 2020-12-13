@@ -1,5 +1,6 @@
 import 'package:connect/Screens/Onboarding/signup.dart';
 import 'package:connect/Screens/base.dart';
+import 'package:connect/Screens/slideshow.dart';
 import 'package:connect/Services/auth.dart';
 import 'package:connect/consts.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +72,7 @@ class _loginState extends State<login> {
               onPressed: () => {
                 auth.signIn(widget.phone, password).then(
                   (value) => 
-                    value ? Navigator.push(context, MaterialPageRoute(builder: (context) => Base())) : 
+                    value ? Navigator.push(context, MaterialPageRoute(builder: (context) => SlideShow())) : 
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
