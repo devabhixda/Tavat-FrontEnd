@@ -252,10 +252,14 @@ class Auth{
   }
 
   updateProfile(String uid, String about, String interests) async {
-    _firestore.collection('users').doc(uid).update({
-      "about": about,
-      "interests": interests
-    });
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('updateProfile');
+    callable.call(
+      <String, dynamic>{
+        "uid" : uid,
+        "about": about,
+        "interests": interests
+      },
+    );
   }
 
   getHistory(String uid) async {
