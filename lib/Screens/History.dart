@@ -57,7 +57,7 @@ class _HistoryState extends State<History> {
             child: StreamBuilder(
               stream: history,
               builder: (context, snapshot){
-                return snapshot.hasData ?  ListView.builder(
+                return snapshot.hasData ?  (snapshot.data.documents.length > 0 ? ListView.builder(
                   itemCount: snapshot.data.documents.length,
                   itemBuilder: (context, index){
                     return Card(
@@ -103,7 +103,13 @@ class _HistoryState extends State<History> {
                       )
                     );
                   }
-                ) : SpinKitDoubleBounce(
+                ) : Center(
+                  child: Text("You don't have any history",
+                    style: GoogleFonts.ptSans(
+                      fontSize: 24
+                    ),
+                  )
+                )) : SpinKitDoubleBounce(
                   color: cred,
                   size: 30.0,
                 );
