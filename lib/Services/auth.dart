@@ -80,6 +80,8 @@ class Auth{
         email: email,
         password: password
       );
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('uid', userCredential.user.uid);
       user = auth.currentUser;
     } catch (e) {
       print(e);
@@ -165,7 +167,7 @@ class Auth{
   onVerify(String phone, BuildContext context) async {
     bool exists;
     await getUser(phone).then((value) => exists = value);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => exists ? Base() : signup()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => exists ? Base() : signup()));
   }
 
   checkIn(String uid, String location, String checkName, bool virtual, String vincinity) async {
