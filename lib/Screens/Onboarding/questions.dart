@@ -17,6 +17,7 @@ class _QuestionsState extends State<Questions> {
   Auth auth = new Auth();
   Stream que;
   int selected = 0;
+  String ans;
 
   void initState() {
     super.initState();
@@ -76,6 +77,11 @@ class _QuestionsState extends State<Questions> {
                                   fontSize: 24,
                                   color: Colors.white
                                 ),
+                                onChanged: (value) => {
+                                  setState(() {
+                                    ans = value;
+                                  })
+                                } ,
                               ),
                             )
                           ),
@@ -94,9 +100,11 @@ class _QuestionsState extends State<Questions> {
                   ),
                   color: cred,
                   onPressed: () {
+                    auth.setAnswer(snapshot.data.documents[selected]["que"], ans, widget.uid);
                     if(snapshot.data.size < selected) {
                       setState(() {
                         selected++;
+                        ans = "";
                       });
                     } else {
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Base()));

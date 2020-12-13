@@ -280,4 +280,15 @@ class Auth{
   getQuestions() async {
     return _firestore.collection("questions").snapshots();
   }
+
+  setAnswer(String que, String ans, String uid) async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('addAnswer');
+    callable.call(
+      <String, dynamic>{
+        "uid" : uid,
+        "question": que,
+        "answer": ans
+      },
+    );
+  }
 }
