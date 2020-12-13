@@ -248,6 +248,26 @@ class _signupState extends State<signup> {
                           );
                         },
                       )
+                    } else if(_imageFile == null) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Empty Image",
+                            ),
+                            content: Text("You must provide a profile picture"),
+                            actions: [
+                              FlatButton(
+                                child: Text("OK"
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          );
+                        },
+                      )
                     } else {
                       auth.createAccount(context, _imageFile, email, password, name, pickedDate.toIso8601String(), gender)
                     }
