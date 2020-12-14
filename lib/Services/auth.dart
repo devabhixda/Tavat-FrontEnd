@@ -187,8 +187,8 @@ class Auth{
       },
     );
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('location', location);
-    prefs.setString('checkName', checkName);
+    await prefs.setString('location', location);
+    await prefs.setString('checkName', checkName);
   }
 
   getNearbyUsers(String location) async {
@@ -209,12 +209,13 @@ class Auth{
     return lst;
   }
 
-  addChatRoom(users, chatRoomId) async {
+  addChatRoom(users, chatRoomId, uid) async {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('addChatRoom');
     callable.call(
       <String, dynamic>{
         "users": users,
-        "chatRoomId": chatRoomId
+        "chatRoomId": chatRoomId, 
+        "uid": uid
       },
     );
   }
@@ -243,7 +244,7 @@ class Auth{
   }
 
   getUserChats(String itIsMyName) async {
-    return _firestore.collection("chatRoom").where('users', arrayContains: itIsMyName).snapshots();
+    return _firestore.collection("chatRoom").where('uid', arrayContains: itIsMyName).snapshots();
   }
 
   Future<String> getName(String uid) async{
@@ -302,6 +303,5 @@ class Auth{
     );
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('location', "not set");
-    prefs.setString('checkName', "");
   }
 }

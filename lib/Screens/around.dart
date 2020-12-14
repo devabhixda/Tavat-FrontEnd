@@ -246,8 +246,9 @@ class _AroundState extends State<Around> {
   sendMessage(String userName) async {
     String user = await auth.getName(userName);
     List<String> users = [await auth.getName(me), user];
+    List<String> uid = [me, userName];
     String chatRoomId = getChatRoomId(me, userName);
-    auth.addChatRoom(users, chatRoomId);
+    auth.addChatRoom(users, chatRoomId, uid);
     Navigator.push(context, MaterialPageRoute(
       builder: (context) => ChatBox(
         chatRoomId: chatRoomId,

@@ -28,7 +28,8 @@ class _ChatState extends State<Chat> {
     setState(() {
       uid = me;
     });
-    auth.getUserChats(uid).then((snapshots) {
+    String user = prefs.getString('uid');
+    auth.getUserChats(user).then((snapshots) {
       setState(() {
         chatRooms = snapshots;
       });
